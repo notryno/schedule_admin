@@ -7,6 +7,8 @@ const api = axios.create({
 
 export const createSchedule = async (userToken, formData) => {
   try {
+    console.log('userToken', userToken);
+    console.log('formData', formData);
     const response = await api.post('/create-schedule/', formData, {
         headers: {
           Authorization: `Bearer ${userToken}`,

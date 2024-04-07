@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const BASE_URL = "http://100.64.223.247:8000/api/";
+export const BASE_URL = "http://localhost:8000/api/";
 
 export const register = async (userData) => {
   try {
@@ -28,7 +28,9 @@ export const login = async (userData) => {
 };
 
 const extractCSRFTokenFromCookies = (response) => {
-  console.log(response.headers)
+  Object.keys(response.headers).forEach(key => {
+    console.log(`${key}: ${response.headers[key]}`);
+  });
   const cookies = response.headers["set-cookie"];
   console.log('cookies', cookies)
   if (cookies) {
