@@ -20,4 +20,17 @@ export const createSchedule = async (userToken, formData) => {
   }
 };
 
+export const getAllClassroomNames = async (userToken) => {
+  try {
+    console.log('userToken', userToken);
+    const response = await api.get('/classroom/', {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },});
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default api;

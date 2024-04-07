@@ -4,6 +4,8 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { createSchedule } from '../hooks/api';
 import {useAuth} from '../hooks/authContext';
 import { format } from 'date-fns';
+import { getAllClassroomNames } from '../hooks/api';
+import { useEffect } from 'react';
 
 const Schedule = () => {
   const [formData, setFormData] = useState({
@@ -18,12 +20,27 @@ const Schedule = () => {
     frequency_per_week: 1,
     day_of_week: 1,
     color: '#ffffff',
+    classroom: '',
   });
   const { userToken } = useAuth();
+  const [classrooms, setClassrooms] = useState([]);
+
+  useEffect(() => {
+    const fetchClassrooms = async () => {
+      try {
+        const classroomNames = await getAllClassroomNames(userToken);
+        setClassrooms(classroomNames);
+      } catch (error) {
+        console.error('Error fetching classrooms:', error);
+      }
+    };
+    fetchClassrooms();
+    console.log('classasldc;asrooms', classrooms);
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    const parsedValue = name === 'number_of_instances' || name === 'frequency_per_week' || name === 'day_of_week'
+    const parsedValue = name === 'number_of_instances' || name === 'frequency_per_week' || name === 'day_of_week' || name === 'classroom'
     ? parseInt(value, 10)
     : value;
     setFormData({ ...formData, [name]: parsedValue });
@@ -97,6 +114,25 @@ const Schedule = () => {
     <option value={6}>Saturday</option>
       </select>
     </div>
+    <div className="mb-4">
+          <label htmlFor="selectedClass" className="block text-sm font-medium text-gray-700">
+            Class
+          </label>
+          <select
+            id="selectedClass"
+            name="classroom"
+            value={formData.classroom}
+            onChange={handleChange}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          >
+            <option key="" value="">Select a class</option>
+            {classrooms.map((classroom) => (
+              <option key={classroom.id} value={classroom.id}>
+                {classroom.name}
+              </option>
+            ))}
+          </select>
+        </div>
     <div className="mb-4">
       <label htmlFor="color" className="block text-sm font-medium text-gray-700">Color</label>
       <input type="color" id="color" name="color" value={formData.color} onChange={handleChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
