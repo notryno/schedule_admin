@@ -1,20 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { login } from "../hooks/authApi";
 import { useAuth } from "../hooks/authContext";
+import { useNavigate } from "react-router-dom";
 
-const Login = ({ navigation }) => {
+const Login = () => {
+  const { userToken } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const { signIn } = useAuth();
+  const navigation = useNavigate();
+
+  useEffect(() => {
+    if (userToken !== null) {
+      navigation("/");
+    }
+  }, [userToken]);
 
   const handleLogin = async () => {
     try {
       const userData = { email, password };
-      console.log("Login Process", userData);
 
       const result = await login(userData);
       signIn(result.access_token, result.profile_picture);
+      navigation("/");
     } catch (error) {
       setError("Login failed. Please check your credentials.");
       console.error("Login failed:", error);
@@ -39,7 +48,9 @@ const Login = ({ navigation }) => {
         onChange={(e) => setPassword(e.target.value)}
         autoComplete="off"
       />
-      <button style={styles.button} onClick={handleLogin}>Login</button>
+      <button style={styles.button} onClick={handleLogin}>
+        Login
+      </button>
       {error && <p style={{ color: "red" }}>{error}</p>}
       <span
         style={styles.registerText}

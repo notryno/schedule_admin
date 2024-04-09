@@ -35,9 +35,6 @@ export const AuthProvider = ({ children }) => {
   const signIn = async (token, profile) => {
     setUserToken(token);
     setUserProfile(profile);
-
-    console.log("Signed in UserProfile:", profile);
-    console.log("Sign in Token:", token);
   };
 
   const signOut = () => {

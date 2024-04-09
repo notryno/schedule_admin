@@ -14,42 +14,12 @@ export const register = async (userData) => {
 
 export const login = async (userData) => {
   try {
-    console.log('Inside login')
     const response = await axios.post(`${BASE_URL}login/`, userData);
-    console.log(response);
-    const csrfToken = extractCSRFTokenFromCookies(response);
-    storeCSRFToken(csrfToken);
-    console.log(csrfToken);
     return response.data;
   } catch (error) {
     console.error("Error logging in:", error);
     throw "Error logging in";
   }
-};
-
-const extractCSRFTokenFromCookies = (response) => {
-  Object.keys(response.headers).forEach(key => {
-    console.log(`${key}: ${response.headers[key]}`);
-  });
-  const cookies = response.headers["set-cookie"];
-  console.log('cookies', cookies)
-  if (cookies) {
-    const csrfCookie = cookies.find((cookie) =>
-      cookie.startsWith("csrftoken=")
-    );
-    if (csrfCookie) {
-      return csrfCookie.split(";")[0].split("=")[1];
-    }
-  }
-  return null;
-};
-
-const storeCSRFToken = (csrfToken) => {
-  sessionStorage.setItem("csrfToken", csrfToken);
-};
-
-const getCSRFToken = () => {
-  return sessionStorage.getItem("csrfToken");
 };
 
 export const getUserData = async (userToken) => {
@@ -127,7 +97,7 @@ export const updateProfilePicture = async (userToken, newProfilePicture) => {
 
 export const updatePassword = async (userToken, passwordData) => {
   try {
-    const csrfToken = getCSRFToken();
+    // const csrfToken = getCSRFToken();
 
     const response = await axios.patch(
       `${BASE_URL}update_password/`,
@@ -138,7 +108,6 @@ export const updatePassword = async (userToken, passwordData) => {
       {
         headers: {
           "Content-Type": "application/json",
-          "X-CSRFToken": csrfToken,
           Authorization: `Bearer ${userToken}`,
         },
       }
