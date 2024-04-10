@@ -110,23 +110,28 @@ const ScheduleModal = ({ isOpen, onRequestClose }) => {
     fetchClassrooms();
   }, []);
 
-  const handleTypePage = () => {
+  const handleTypePage = (e) => {
+    e.preventDefault();
     setCurrentPage("TypeItem");
   };
 
-  const handleDayPage = () => {
+  const handleDayPage = (e) => {
+    e.preventDefault();
     setCurrentPage("DayItem");
   };
 
-  const handleClassPage = () => {
+  const handleClassPage = (e) => {
+    e.preventDefault();
     setCurrentPage("ClassItem");
   };
 
-  const handleHomePage = () => {
+  const handleHomePage = (e) => {
+    e.preventDefault();
     setCurrentPage("Home");
   };
 
-  const handleColorPage = () => {
+  const handleColorPage = (e) => {
+    e.preventDefault();
     setCurrentPage("ColorItem");
   };
 
@@ -171,6 +176,7 @@ const ScheduleModal = ({ isOpen, onRequestClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Inside handleSubmit");
     const formValid = Object.values(formErrors).every((error) => !error);
 
     const validateFormFields = () => {
@@ -319,6 +325,7 @@ const ScheduleModal = ({ isOpen, onRequestClose }) => {
             ) : (
               <div className="flex justify-between items-center w-full">
                 <button
+                  type="button"
                   onClick={handleHomePage}
                   className="text-gray-400 hover:text-gray-500 focus:outline-none"
                 >
@@ -724,32 +731,6 @@ const ScheduleModal = ({ isOpen, onRequestClose }) => {
                         onClick={() => handleSelectOption("color", color)}
                       >
                         {color === formData.color && (
-                          //   <svg
-                          //     xmlns="http://www.w3.org/2000/svg"
-                          //     viewBox="0 0 512 512"
-                          //     className="h-6 w-6 absolute bottom-1 right-1"
-                          //   >
-                          //     {/* Blue filled circle */}
-                          //     <circle fill="#3B82F7" cx="256" cy="256" r="200" />
-
-                          //     {/* White tick */}
-                          //     <path
-                          //       fill="#ffffff"
-                          //       strokeLinecap="round"
-                          //       strokeWidth="0"
-                          //       d="M369 209c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-111 111-47-47c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l64 64c9.4 9.4 24.6 9.4 33.9 0L369 209z"
-                          //     />
-
-                          //     {/* White circle */}
-                          //     <circle
-                          //       fill="none"
-                          //       stroke="#ffffff"
-                          //       strokeWidth="30"
-                          //       cx="256"
-                          //       cy="256"
-                          //       r="200"
-                          //     />
-                          //   </svg>
                           <FontAwesomeIcon
                             icon={faCircleCheck}
                             className="h-6 w-6 absolute bottom-1 right-1"
