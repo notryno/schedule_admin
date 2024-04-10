@@ -237,7 +237,10 @@ const Schedule = () => {
             <div className="flex justify-between items-center w-full">
               {currentPage === "Home" ? (
                 <button
-                  onClick={() => setModalIsOpen(false)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setModalIsOpen(false);
+                  }}
                   className="text-gray-400 hover:text-gray-500 focus:outline-none"
                 >
                   <svg
