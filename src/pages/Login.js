@@ -4,11 +4,10 @@ import { useAuth } from "../hooks/authContext";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const { userToken } = useAuth();
+  const { userToken, signIn } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-  const { signIn } = useAuth();
   const navigation = useNavigate();
 
   useEffect(() => {

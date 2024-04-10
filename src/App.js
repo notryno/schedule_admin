@@ -48,7 +48,6 @@ const App = () => {
             path="/classroom"
             element={<PrivateRoute element={Classroom} />}
           />
-          <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<Login />} />
         </Routes>
       </AuthProvider>

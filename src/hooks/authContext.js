@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import base64 from "base-64";
+import Cookies from "js-cookie";
 
 const AuthContext = createContext();
 
@@ -35,11 +36,13 @@ export const AuthProvider = ({ children }) => {
   const signIn = async (token, profile) => {
     setUserToken(token);
     setUserProfile(profile);
+    Cookies.set("token", token, { expires: decodeToken(token).exp });
   };
 
   const signOut = () => {
     setUserToken(null);
     setUserProfile(null);
+    Cookies.remove("token");
     console.log("User logged out");
   };
 
