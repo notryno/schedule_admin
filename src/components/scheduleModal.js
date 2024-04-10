@@ -5,6 +5,8 @@ import { useAuth } from "../hooks/authContext";
 import { getAllClassroomNames } from "../hooks/api";
 import TextField from "@mui/material/TextField";
 import dayjs from "dayjs";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleCheck } from "@fortawesome/free-regular-svg-icons";
 
 import {
   LocalizationProvider,
@@ -270,8 +272,8 @@ const ScheduleModal = ({ isOpen, onRequestClose }) => {
             className="mb-4 flex flex-col items-center py-5 px-8 sticky top-0 bg-white z-20"
             style={{ boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)" }}
           >
-            <div className="flex justify-between items-center w-full">
-              {currentPage === "Home" ? (
+            {currentPage === "Home" ? (
+              <div className="flex justify-between items-center w-full">
                 <button
                   onClick={(e) => {
                     e.preventDefault();
@@ -294,7 +296,28 @@ const ScheduleModal = ({ isOpen, onRequestClose }) => {
                     />
                   </svg>
                 </button>
-              ) : (
+                <button
+                  type="submit"
+                  className="text-gray-600 hover:text-gray-800 focus:outline-none"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </button>
+              </div>
+            ) : (
+              <div className="flex justify-between items-center w-full">
                 <button
                   onClick={handleHomePage}
                   className="text-gray-400 hover:text-gray-500 focus:outline-none"
@@ -314,27 +337,8 @@ const ScheduleModal = ({ isOpen, onRequestClose }) => {
                     />
                   </svg>
                 </button>
-              )}
-              <button
-                type="submit"
-                className="text-gray-600 hover:text-gray-800 focus:outline-none"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-              </button>
-            </div>
+              </div>
+            )}
             <div className="mt-4 w-full">
               <input
                 type="text"
@@ -709,7 +713,7 @@ const ScheduleModal = ({ isOpen, onRequestClose }) => {
                     {groupItem.colors.map((color, colorIndex) => (
                       <button
                         key={colorIndex}
-                        style={{ backgroundColor: color }}
+                        style={{ backgroundColor: color, position: "relative" }}
                         className={`w-full h-16 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:border sm:text-sm hover:border-black hover:border ${
                           colorIndex === 0 ? "rounded-l-md" : ""
                         } ${
@@ -718,7 +722,45 @@ const ScheduleModal = ({ isOpen, onRequestClose }) => {
                             : ""
                         }`}
                         onClick={() => handleSelectOption("color", color)}
-                      />
+                      >
+                        {color === formData.color && (
+                          //   <svg
+                          //     xmlns="http://www.w3.org/2000/svg"
+                          //     viewBox="0 0 512 512"
+                          //     className="h-6 w-6 absolute bottom-1 right-1"
+                          //   >
+                          //     {/* Blue filled circle */}
+                          //     <circle fill="#3B82F7" cx="256" cy="256" r="200" />
+
+                          //     {/* White tick */}
+                          //     <path
+                          //       fill="#ffffff"
+                          //       strokeLinecap="round"
+                          //       strokeWidth="0"
+                          //       d="M369 209c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-111 111-47-47c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l64 64c9.4 9.4 24.6 9.4 33.9 0L369 209z"
+                          //     />
+
+                          //     {/* White circle */}
+                          //     <circle
+                          //       fill="none"
+                          //       stroke="#ffffff"
+                          //       strokeWidth="30"
+                          //       cx="256"
+                          //       cy="256"
+                          //       r="200"
+                          //     />
+                          //   </svg>
+                          <FontAwesomeIcon
+                            icon={faCircleCheck}
+                            className="h-6 w-6 absolute bottom-1 right-1"
+                            style={{
+                              color: "#ffffff",
+                              backgroundColor: "#3B82F7",
+                              borderRadius: "50%",
+                            }}
+                          />
+                        )}
+                      </button>
                     ))}
                   </div>
                 </div>
