@@ -38,7 +38,7 @@ const customStyles = {
 };
 
 Modal.setAppElement("#root");
-const ScheduleModal = ({ isOpen, onRequestClose }) => {
+const ScheduleModal = ({ isOpen, onRequestClose, fetchAndSetSchedules }) => {
   const [formData, setFormData] = useState({
     title: "",
     start_date: "",
@@ -229,6 +229,7 @@ const ScheduleModal = ({ isOpen, onRequestClose }) => {
         console.log("Schedule created successfully!");
         onRequestClose(false);
         resetFormData();
+        fetchAndSetSchedules();
       } catch (error) {
         console.error("Error creating schedule:", error);
       }
