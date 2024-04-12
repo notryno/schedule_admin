@@ -210,7 +210,7 @@ const ScheduleModal = ({ isOpen, onRequestClose }) => {
         errors.description = true;
       }
 
-      if (formData.classroom.trim() === "") {
+      if (String(formData.classroom).trim() === "") {
         errors.classroom = true;
       }
 

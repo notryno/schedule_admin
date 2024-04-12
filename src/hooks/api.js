@@ -32,4 +32,18 @@ export const getAllClassroomNames = async (userToken) => {
   }
 };
 
+export const getSchedules = async (userToken) => {
+    try {
+      const response = await api.get("/schedules/", {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+  
+
 export default api;
