@@ -9,6 +9,11 @@ import {
   getAllClassroomNames,
   deleteSchedule,
 } from "../hooks/api";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
+import Typography from "@mui/material/Typography";
+import Link from "@mui/material/Link";
+import Stack from "@mui/material/Stack";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 
 const Schedule = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -195,7 +200,7 @@ const Schedule = () => {
       },
     },
     {
-      title: "Classroom",
+      title: "Class",
       dataIndex: "classroom",
       key: "classroom",
       render: (classroomId) => {
@@ -256,13 +261,36 @@ const Schedule = () => {
     });
   };
 
+  const handleClick = (event) => {
+    event.preventDefault();
+    console.log("Breadcrumb clicked");
+  };
+
+  const breadcrumbs = (
+    <Stack direction="row" spacing={1} alignItems="center">
+      <Breadcrumbs
+        separator={<NavigateNextIcon fontSize="small" />}
+        aria-label="breadcrumb"
+      >
+        <Link underline="hover" color="inherit" href="/">
+          Home
+        </Link>
+        <Typography color="text.primary">Schedule</Typography>
+      </Breadcrumbs>
+    </Stack>
+  );
+
   return (
     <>
       <div className="fixed bottom-8 right-8 z-50">
         {!modalIsOpen && (
           <Fab
             aria-label="add"
-            style={{ position: "fixed", bottom: "20px", right: "20px" }}
+            style={{
+              position: "fixed",
+              bottom: "20px",
+              right: "20px",
+            }}
             onClick={() => setModalIsOpen(true)}
           >
             <svg
@@ -293,7 +321,11 @@ const Schedule = () => {
           fetchAndSetSchedules={fetchAndSetSchedules}
         />
       </div>
-      <div className=" z-50">
+      <div className=" z-40">
+        <div style={styles.customHeader}>
+          <h1 style={styles.headerTitle}>Schedules</h1>
+          {breadcrumbs}
+        </div>
         <Table
           dataSource={schedules}
           columns={columns}
@@ -308,6 +340,18 @@ const Schedule = () => {
       </div>
     </>
   );
+};
+
+const styles = {
+  customHeader: {
+    padding: "16px",
+    borderBottom: "1px solid #ddd",
+  },
+  headerTitle: {
+    fontSize: "24px",
+    fontWeight: "bold",
+    marginBottom: "8px",
+  },
 };
 
 export default Schedule;
