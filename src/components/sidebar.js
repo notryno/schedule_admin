@@ -1,46 +1,137 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Button } from "antd";
+import {
+  HomeOutlined,
+  SupervisorAccountOutlined,
+  PeopleAltOutlined,
+  HistoryEduOutlined,
+  EventNoteOutlined,
+  EditCalendarOutlined,
+} from "@mui/icons-material";
+import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
+import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
+import { Link, useLocation } from "react-router-dom";
 
-const Sidebar = ({ isOpen, toggleSidebar }) => {
+function Sidebar({ isOpen, toggleSidebar }) {
+  const location = useLocation();
+  const currentPath = location.pathname;
+
+  const toggleisOpen = () => {
+    toggleSidebar(!isOpen);
+  };
+
+  const navItems = [
+    { key: "home", icon: <HomeOutlined />, label: "Home", link: "/" },
+    {
+      key: "teachers",
+      icon: <SupervisorAccountOutlined />,
+      label: "Teachers",
+      link: "/teachers",
+    },
+    {
+      key: "students",
+      icon: <PeopleAltOutlined />,
+      label: "Students",
+      link: "/students",
+    },
+    {
+      key: "courses",
+      icon: <HistoryEduOutlined />,
+      label: "Courses",
+      link: "/courses",
+    },
+    {
+      key: "schedule",
+      icon: <EventNoteOutlined />,
+      label: "Schedule",
+      link: "/schedule",
+    },
+    {
+      key: "specialSchedule",
+      icon: <EditCalendarOutlined />,
+      label: "Modify",
+      link: "/special-schedule",
+    },
+  ];
+
+  const activeStyle = {
+    color: "white",
+    backgroundColor: "rgba(0,0,0,0.2)",
+    borderRadius: 10,
+  };
+
   return (
-    <aside
-      className={`sidebar bg-gray-800 text-white h-screen w-64 fixed top-0 left-0 transform ${
-        isOpen ? "translate-x-0" : "-translate-x-full"
-      } transition duration-300 ease-in-out z-50`}
+    <div
+      className="w-20 "
+      style={{ height: "100vh", width: isOpen ? "12%" : "8%" }}
     >
-      <div className="p-4">
-        <h3 className="text-2xl font-bold mb-4">Sidebar</h3>
-        <ul>
-          <li className="mb-2">
-            <Link to="/" className="text-white hover:text-gray-400">
-              Home
-            </Link>
-          </li>
-          <li className="mb-2">
-            <Link to="/classroom" className="text-white hover:text-gray-400">
-              Classroom
-            </Link>
-          </li>
-          <li className="mb-2">
-            <Link to="/schedule" className="text-white hover:text-gray-400">
-              Schedule
-            </Link>
-          </li>
-          <li className="mb-2">
-            <Link to="/user" className="text-white hover:text-gray-400">
-              User
-            </Link>
-          </li>
-        </ul>
-      </div>
-      <button
-        className="fixed bottom-4 left-4 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-        onClick={toggleSidebar}
+      <div
+        style={{
+          backgroundColor: "burlywood",
+          top: "calc(50vh - 40vh)",
+          height: "80vh",
+          position: "fixed",
+          left: 20,
+          width: isOpen ? "9%" : "5%",
+          transition: "width 0.3s",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          padding: "10% 0",
+          borderRadius: "20px",
+        }}
+        className="drop-shadow-lg"
       >
-        Close Sidebar
-      </button>
-    </aside>
+        <Button
+          onClick={toggleisOpen}
+          style={{
+            marginBottom: 16,
+            borderRadius: "100%",
+            padding: 8,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            position: "absolute",
+            top: 20,
+            left: isOpen ? 135 : 70,
+            zIndex: 1000,
+          }}
+        >
+          {!isOpen ? (
+            <ArrowForwardIosRoundedIcon style={{ fontSize: 16 }} />
+          ) : (
+            <ArrowBackIosNewRoundedIcon style={{ fontSize: 16 }} />
+          )}
+        </Button>
+        <div
+          style={{ width: "80%", textAlign: "center" }}
+          className="h-full flex flex-col justify-between"
+        >
+          {navItems.map((item) => (
+            <Link key={item.key} to={item.link}>
+              <div
+                className={`items-center flex ${
+                  !isOpen ? "justify-center py-4" : "justify-start py-4 px-2"
+                } ${currentPath === item.link ? "active" : ""}`}
+                style={{
+                  ...{ fontSize: 42, cursor: "pointer" },
+                  ...(currentPath === item.link ? activeStyle : {}),
+                }}
+              >
+                {item.icon}
+                {isOpen && (
+                  <span style={{ marginLeft: 10, fontSize: 16 }}>
+                    {item.label}
+                  </span>
+                )}
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </div>
   );
-};
+}
 
 export default Sidebar;

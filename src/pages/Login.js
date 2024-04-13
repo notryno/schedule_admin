@@ -66,6 +66,7 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
+    width: "100%",
   },
   title: {
     fontSize: 24,

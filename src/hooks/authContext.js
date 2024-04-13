@@ -42,8 +42,6 @@ export const AuthProvider = ({ children }) => {
   const signOut = () => {
     setUserToken(null);
     setUserProfile(null);
-    Cookies.remove("token");
-    console.log("User logged out");
   };
 
   return (
