@@ -33,17 +33,43 @@ export const getAllClassroomNames = async (userToken) => {
 };
 
 export const getSchedules = async (userToken) => {
-    try {
-      const response = await api.get("/schedules/", {
-        headers: {
-          Authorization: `Bearer ${userToken}`,
-        },
-      });
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  };
-  
+  try {
+    const response = await api.get("/schedules/all/", {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deleteSchedule = async (userToken, scheduleId) => {
+  try {
+    const response = await api.delete(`/schedule/${scheduleId}/`, {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const editSchedule = async (userToken, scheduleId, formData) => {
+  try {
+    const response = await api.patch(`/schedule/${scheduleId}/`, formData, {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
 
 export default api;

@@ -1,15 +1,25 @@
 import React, { useState, useEffect } from "react";
 import ScheduleModal from "../components/scheduleModal";
+import UpdateScheduleModal from "../components/updateScheduleModal";
 import Fab from "@mui/material/Fab";
-import { Table, Tag, Space } from "antd";
+import { Table, Tag, Space, Button, Modal } from "antd";
 import { useAuth } from "../hooks/authContext";
-import { getSchedules } from "../hooks/api";
+import {
+  getSchedules,
+  getAllClassroomNames,
+  deleteSchedule,
+} from "../hooks/api";
 
 const Schedule = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [updateModalIsOpen, setUpdateModalIsOpen] = useState(false);
   const [schedules, setSchedules] = useState([]);
   const [loading, setLoading] = useState(true);
   const { userToken } = useAuth();
+  const [classrooms, setClassrooms] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [selectedSchedule, setSelectedSchedule] = useState(null);
 
   useEffect(() => {
     const fetchSchedules = async () => {
@@ -23,12 +33,23 @@ const Schedule = () => {
       }
     };
 
+    const fetchClassrooms = async () => {
+      try {
+        const classroomNames = await getAllClassroomNames(userToken);
+        setClassrooms(classroomNames);
+      } catch (error) {
+        console.error("Error fetching classrooms:", error);
+      }
+    };
+
     fetchSchedules();
+    fetchClassrooms();
   }, [userToken]);
 
   const fetchAndSetSchedules = async () => {
     try {
       const data = await getSchedules(userToken);
+      console.log("In fetchAndSetSchedules");
       setSchedules(data);
       setLoading(false);
     } catch (error) {
@@ -42,7 +63,7 @@ const Schedule = () => {
       title: "#",
       dataIndex: "id",
       key: "id",
-      render: (text, record, index) => index + 1,
+      render: (_, __, index) => (currentPage - 1) * pageSize + index + 1,
     },
     {
       title: "Title",
@@ -165,7 +186,9 @@ const Schedule = () => {
               backgroundColor: color,
               width: "75px",
               height: "40px",
-              border: ".1em black solid",
+
+              borderRadius: "5px",
+              boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.25)",
             }}
           ></div>
         );
@@ -175,21 +198,62 @@ const Schedule = () => {
       title: "Classroom",
       dataIndex: "classroom",
       key: "classroom",
+      render: (classroomId) => {
+        const classroom = classrooms.find((item) => item.id === classroomId);
+        return classroom ? classroom.name : "";
+      },
+      filters: classrooms.map((classroom) => ({
+        text: classroom.name,
+        value: classroom.id,
+      })),
+      filterMode: "tree",
+      filterSearch: true,
+      onFilter: (value, record) => record.classroom === value,
     },
     {
       title: "Action",
       key: "action",
-      render: (_) => (
+      render: (_, record) => (
         <Space size="middle">
-          <a>Edit</a>
-          <a>Delete</a>
+          <Button onClick={() => handleEdit(record)}>Edit</Button>
+          <Button danger onClick={() => handleDelete(record.id)}>
+            Delete
+          </Button>
         </Space>
       ),
     },
   ];
 
   const onChange = (pagination, filters, sorter, extra) => {
+    setCurrentPage(pagination.current);
+    setPageSize(pagination.pageSize);
     console.log("params", pagination, filters, sorter, extra);
+  };
+
+  const handleEdit = (record) => {
+    setSelectedSchedule(record);
+    setUpdateModalIsOpen(true);
+  };
+
+  const handleDelete = (id) => {
+    Modal.confirm({
+      title: "Delete this schedule?",
+      content: "This action cannot be undone.",
+      onOk: async () => {
+        try {
+          await deleteSchedule(userToken, id);
+          await fetchAndSetSchedules();
+        } catch (error) {
+          console.error("Error deleting schedule:", error);
+        }
+      },
+      onCancel: () => {
+        console.log("Deletion canceled.");
+      },
+      okText: "Delete",
+      cancelText: "Cancel",
+      okButtonProps: { danger: true },
+    });
   };
 
   return (
@@ -222,6 +286,12 @@ const Schedule = () => {
           onRequestClose={() => setModalIsOpen(false)}
           fetchAndSetSchedules={fetchAndSetSchedules}
         />
+        <UpdateScheduleModal
+          isOpen={updateModalIsOpen}
+          onRequestClose={() => setUpdateModalIsOpen(false)}
+          selectedSchedule={selectedSchedule}
+          fetchAndSetSchedules={fetchAndSetSchedules}
+        />
       </div>
       <div className=" z-50">
         <Table
@@ -233,7 +303,7 @@ const Schedule = () => {
             position: ["bottomCenter"],
           }}
           onChange={onChange}
-          className="z-1"
+          className="z-0"
         />
       </div>
     </>

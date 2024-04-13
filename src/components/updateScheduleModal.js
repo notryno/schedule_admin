@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
-import { createSchedule } from "../hooks/api";
 import { useAuth } from "../hooks/authContext";
-import { getAllClassroomNames } from "../hooks/api";
+import { getAllClassroomNames, editSchedule } from "../hooks/api";
 import TextField from "@mui/material/TextField";
 import dayjs from "dayjs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -18,7 +17,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 const customStyles = {
   overlay: {
     backgroundColor: "rgba(0, 0, 0, 0.5)",
-    zIndex: "9999",
+    zIndex: "50",
   },
   content: {
     top: "50%",
@@ -39,7 +38,12 @@ const customStyles = {
 };
 
 Modal.setAppElement("#root");
-const ScheduleModal = ({ isOpen, onRequestClose, fetchAndSetSchedules }) => {
+const UpdateScheduleModal = ({
+  isOpen,
+  onRequestClose,
+  fetchAndSetSchedules,
+  selectedSchedule,
+}) => {
   const [formData, setFormData] = useState({
     title: "",
     start_date: "",
@@ -57,6 +61,7 @@ const ScheduleModal = ({ isOpen, onRequestClose, fetchAndSetSchedules }) => {
   const { userToken } = useAuth();
   const [classrooms, setClassrooms] = useState([]);
   const [currentPage, setCurrentPage] = useState("Home");
+
   const daysOfWeek = [
     "Sunday",
     "Monday",
@@ -110,6 +115,31 @@ const ScheduleModal = ({ isOpen, onRequestClose, fetchAndSetSchedules }) => {
     };
     fetchClassrooms();
   }, []);
+
+  useEffect(() => {
+    const fetchSchedule = async () => {
+      try {
+        setFormData({
+          title: selectedSchedule.title,
+          start_date: selectedSchedule.start_date,
+          start_time: selectedSchedule.start_time,
+          end_time: selectedSchedule.end_time,
+          type: selectedSchedule.type,
+          location: selectedSchedule.location,
+          description: selectedSchedule.description,
+          number_of_instances: selectedSchedule.number_of_instances,
+          frequency_per_week: selectedSchedule.frequency_per_week,
+          day_of_week: selectedSchedule.day_of_week,
+          color: selectedSchedule.color,
+          classroom: selectedSchedule.classroom,
+        });
+        console.log(formData);
+      } catch (error) {
+        console.error("Error fetching schedule:", error);
+      }
+    };
+    fetchSchedule();
+  }, [selectedSchedule]);
 
   const handleTypePage = (e) => {
     e.preventDefault();
@@ -226,13 +256,13 @@ const ScheduleModal = ({ isOpen, onRequestClose, fetchAndSetSchedules }) => {
 
     if (formValid && validateFormFields()) {
       try {
-        await createSchedule(userToken, formData);
-        console.log("Schedule created successfully!");
+        await editSchedule(userToken, selectedSchedule.id, formData);
+        console.log("Schedule updated successfully!");
         onRequestClose(false);
         resetFormData();
         fetchAndSetSchedules();
       } catch (error) {
-        console.error("Error creating schedule:", error);
+        console.error("Error updating schedule:", error);
       }
     }
   };
@@ -273,7 +303,7 @@ const ScheduleModal = ({ isOpen, onRequestClose, fetchAndSetSchedules }) => {
         isOpen={isOpen}
         onRequestClose={onRequestClose}
         style={customStyles}
-        contentLabel="Create Schedule Modal"
+        contentLabel="Update Schedule Modal"
       >
         <form onSubmit={handleSubmit} className="w-full">
           <div
@@ -756,4 +786,4 @@ const ScheduleModal = ({ isOpen, onRequestClose, fetchAndSetSchedules }) => {
   );
 };
 
-export default ScheduleModal;
+export default UpdateScheduleModal;
