@@ -4,9 +4,10 @@ import {
   HomeOutlined,
   SupervisorAccountOutlined,
   PeopleAltOutlined,
-  HistoryEduOutlined,
   EventNoteOutlined,
   EditCalendarOutlined,
+  ClassOutlined,
+  BadgeOutlined,
 } from "@mui/icons-material";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
@@ -36,7 +37,7 @@ function Sidebar({ isOpen, toggleSidebar }) {
     },
     {
       key: "courses",
-      icon: <HistoryEduOutlined />,
+      icon: <ClassOutlined />,
       label: "Courses",
       link: "/courses",
     },
@@ -51,6 +52,12 @@ function Sidebar({ isOpen, toggleSidebar }) {
       icon: <EditCalendarOutlined />,
       label: "Modify",
       link: "/special-schedule",
+    },
+    {
+      key: "classroom",
+      icon: <BadgeOutlined />,
+      label: "Classroom",
+      link: "/classroom",
     },
   ];
 

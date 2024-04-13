@@ -14,17 +14,17 @@ const breadcrumbs = (
       <Link underline="hover" color="inherit" href="/">
         Home
       </Link>
-      <Typography color="text.primary">Schedule</Typography>
+      <Typography color="text.primary">Special Schedule</Typography>
     </Breadcrumbs>
   </Stack>
 );
 
-const Home = () => {
+const Modify = () => {
   return (
     <>
       <div style={styles.container}>
         <div style={styles.customHeader}>
-          <h1 style={styles.headerTitle}>Home</h1>
+          <h1 style={styles.headerTitle}>Modify</h1>
           {breadcrumbs}
         </div>
       </div>
@@ -46,4 +46,4 @@ const styles = {
   },
 };
 
-export default Home;
+export default Modify;

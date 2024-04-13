@@ -19,12 +19,12 @@ const breadcrumbs = (
   </Stack>
 );
 
-const Home = () => {
+const Teachers = () => {
   return (
     <>
       <div style={styles.container}>
         <div style={styles.customHeader}>
-          <h1 style={styles.headerTitle}>Home</h1>
+          <h1 style={styles.headerTitle}>Teachers</h1>
           {breadcrumbs}
         </div>
       </div>
@@ -46,4 +46,4 @@ const styles = {
   },
 };
 
-export default Home;
+export default Teachers;

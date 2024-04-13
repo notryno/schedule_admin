@@ -10,10 +10,13 @@ import {
 import Home from "./pages/Home";
 import Schedule from "./pages/Schedule";
 import Classroom from "./pages/Classroom";
-import User from "./pages/User";
+import Students from "./pages/Students";
 import Login from "./pages/Login";
 import Sidebar from "./components/sidebar";
 import { useAuth, AuthProvider } from "./hooks/authContext";
+import Teachers from "./pages/Teachers";
+import Courses from "./pages/Courses";
+import Modify from "./pages/Modify";
 
 const PrivateRoute = ({ element: Component, ...rest }) => {
   const { userToken } = useAuth();
@@ -46,10 +49,25 @@ const App = () => {
               path="/schedule"
               element={<PrivateRoute element={Schedule} />}
             />
-            <Route path="/user" element={<PrivateRoute element={User} />} />
+            <Route
+              path="/teachers"
+              element={<PrivateRoute element={Teachers} />}
+            />
+            <Route
+              path="/students"
+              element={<PrivateRoute element={Students} />}
+            />
+            <Route
+              path="/courses"
+              element={<PrivateRoute element={Courses} />}
+            />
             <Route
               path="/classroom"
               element={<PrivateRoute element={Classroom} />}
+            />
+            <Route
+              path="/special-schedule"
+              element={<PrivateRoute element={Modify} />}
             />
             <Route path="/login" element={<Login />} />
           </Routes>

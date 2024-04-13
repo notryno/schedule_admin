@@ -275,7 +275,7 @@ const Schedule = () => {
         <Link underline="hover" color="inherit" href="/">
           Home
         </Link>
-        <Typography color="text.primary">Schedule</Typography>
+        <Typography color="text.primary">Schedules</Typography>
       </Breadcrumbs>
     </Stack>
   );
