@@ -69,8 +69,8 @@ function Sidebar({ isOpen, toggleSidebar }) {
 
   return (
     <div
-      className="w-20 "
-      style={{ height: "100vh", width: isOpen ? "12%" : "8%" }}
+      className="w-20 z-50"
+      style={{ height: "100vh", width: isOpen ? "13%" : "8%" }}
     >
       <div
         style={{
@@ -79,7 +79,7 @@ function Sidebar({ isOpen, toggleSidebar }) {
           height: "80vh",
           position: "fixed",
           left: 20,
-          width: isOpen ? "9%" : "5%",
+          width: isOpen ? "11%" : "5%",
           transition: "width 0.3s",
           display: "flex",
           flexDirection: "column",

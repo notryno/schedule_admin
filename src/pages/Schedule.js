@@ -191,7 +191,6 @@ const Schedule = () => {
               backgroundColor: color,
               width: "75px",
               height: "40px",
-
               borderRadius: "5px",
               boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.25)",
             }}
@@ -321,7 +320,7 @@ const Schedule = () => {
           fetchAndSetSchedules={fetchAndSetSchedules}
         />
       </div>
-      <div className=" z-40">
+      <div className="z-40" style={styles.container}>
         <div style={styles.customHeader}>
           <h1 style={styles.headerTitle}>Schedules</h1>
           {breadcrumbs}
@@ -335,7 +334,7 @@ const Schedule = () => {
             position: ["bottomCenter"],
           }}
           onChange={onChange}
-          className="z-0"
+          className="z-1"
         />
       </div>
     </>
@@ -343,6 +342,9 @@ const Schedule = () => {
 };
 
 const styles = {
+  container: {
+  width: "100%", 
+  },
   customHeader: {
     padding: "16px",
     borderBottom: "1px solid #ddd",
