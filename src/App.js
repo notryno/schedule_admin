@@ -21,8 +21,6 @@ import Modify from "./pages/Modify";
 const PrivateRoute = ({ element: Component, ...rest }) => {
   const { userToken } = useAuth();
 
-  console.log("User token:", userToken);
-
   return userToken !== null ? (
     <Component {...rest} />
   ) : (

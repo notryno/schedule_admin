@@ -72,10 +72,22 @@ export const editSchedule = async (userToken, scheduleId, formData) => {
   }
 };
 
-
 export const getStudents = async (userToken) => {
   try {
     const response = await api.get("/students/", {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getTeachers = async (userToken) => {
+  try {
+    const response = await api.get("/teachers/", {
       headers: {
         Authorization: `Bearer ${userToken}`,
       },
