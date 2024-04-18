@@ -2,11 +2,13 @@ import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import { createSchedule } from "../hooks/api";
 import { useAuth } from "../hooks/authContext";
-import { getAllClassroomNames } from "../hooks/api";
+import { getAllClassroomNames, getCourses } from "../hooks/api";
 import TextField from "@mui/material/TextField";
 import dayjs from "dayjs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck } from "@fortawesome/free-regular-svg-icons";
+import MenuItem from "@mui/material/MenuItem";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
 
 import {
   LocalizationProvider,
@@ -18,7 +20,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 const customStyles = {
   overlay: {
     backgroundColor: "rgba(0, 0, 0, 0.5)",
-    zIndex: "9999",
+    zIndex: "90",
   },
   content: {
     top: "50%",
@@ -54,8 +56,10 @@ const ScheduleModal = ({ isOpen, onRequestClose, fetchAndSetSchedules }) => {
     color: "#8ee03c",
     classroom: "",
   });
-  const { userToken } = useAuth();
+  const { getUserToken } = useAuth();
+  const userToken = getUserToken();
   const [classrooms, setClassrooms] = useState([]);
+  const [courses, setCourses] = useState([]);
   const [currentPage, setCurrentPage] = useState("Home");
   const daysOfWeek = [
     "Sunday",
@@ -108,7 +112,19 @@ const ScheduleModal = ({ isOpen, onRequestClose, fetchAndSetSchedules }) => {
         console.error("Error fetching classrooms:", error);
       }
     };
+
+    const fetchCourses = async () => {
+      try {
+        const courseNames = await getCourses(userToken);
+        console.log(courseNames);
+        setCourses(courseNames);
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+      }
+    };
+
     fetchClassrooms();
+    fetchCourses();
   }, []);
 
   const handleTypePage = (e) => {
@@ -147,6 +163,13 @@ const ScheduleModal = ({ isOpen, onRequestClose, fetchAndSetSchedules }) => {
         : value;
     setFormData({ ...formData, [name]: parsedValue });
     setFormErrors({ ...formErrors, [name]: value.trim() === "" });
+  };
+
+  const handleCourseSelect = (e) => {
+    const value = e.target.value;
+    const course = courses.find((course) => course.id == value);
+    const title = course ? course.name : "";
+    setFormData({ ...formData, ["title"]: title, ["course"]: value });
   };
 
   const handleDateChange = (date) => {
@@ -352,16 +375,39 @@ const ScheduleModal = ({ isOpen, onRequestClose, fetchAndSetSchedules }) => {
               <input
                 type="text"
                 id="title"
+                disabled
                 name="title"
                 placeholder="Title"
                 value={formData.title}
                 onChange={handleChange}
                 className="mt-1 block w-full border:none focus:outline-none text-2xl font-semibold"
+                style={{
+                  backgroundColor: "white",
+                }}
               />
             </div>
           </div>
           {currentPage === "Home" && (
             <div className="p-8 pt-0">
+              <div className="mb-4 mt-10">
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={formData.course}
+                  label="Course"
+                  onChange={handleCourseSelect}
+                  style={{ width: "100%" }}
+                >
+                  <MenuItem value="" disabled>
+                    Select a Course
+                  </MenuItem>
+                  {courses.map((course) => (
+                    <MenuItem key={course.id} value={course.id}>
+                      {course.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </div>
               <div className="mb-4">
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker

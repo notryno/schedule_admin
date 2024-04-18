@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import { useAuth } from "../hooks/authContext";
-import { getAllClassroomNames, editSchedule } from "../hooks/api";
+import { getAllClassroomNames, editSchedule, getCourses } from "../hooks/api";
 import TextField from "@mui/material/TextField";
 import dayjs from "dayjs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck } from "@fortawesome/free-regular-svg-icons";
+import MenuItem from "@mui/material/MenuItem";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
 
 import {
   LocalizationProvider,
@@ -57,9 +59,12 @@ const UpdateScheduleModal = ({
     day_of_week: 0,
     color: "#8ee03c",
     classroom: "",
+    course: "",
   });
-  const { userToken } = useAuth();
+  const { getUserToken } = useAuth();
+  const userToken = getUserToken();
   const [classrooms, setClassrooms] = useState([]);
+  const [courses, setCourses] = useState([]);
   const [currentPage, setCurrentPage] = useState("Home");
 
   const daysOfWeek = [
@@ -102,6 +107,7 @@ const UpdateScheduleModal = ({
     day_of_week: false,
     color: false,
     classroom: false,
+    course: false,
   });
 
   useEffect(() => {
@@ -113,12 +119,22 @@ const UpdateScheduleModal = ({
         console.error("Error fetching classrooms:", error);
       }
     };
+    const fetchCourses = async () => {
+      try {
+        const courseNames = await getCourses(userToken);
+        setCourses(courseNames);
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+      }
+    };
     fetchClassrooms();
+    fetchCourses();
   }, []);
 
   useEffect(() => {
     const fetchSchedule = async () => {
       try {
+        console.log(courses);
         setFormData({
           title: selectedSchedule.title,
           start_date: selectedSchedule.start_date,
@@ -132,8 +148,10 @@ const UpdateScheduleModal = ({
           day_of_week: selectedSchedule.day_of_week,
           color: selectedSchedule.color,
           classroom: selectedSchedule.classroom,
+          course:
+            courses.find((course) => course.name === selectedSchedule.title)
+              ?.id || "",
         });
-        console.log(formData);
       } catch (error) {
         console.error("Error fetching schedule:", error);
       }
@@ -203,6 +221,13 @@ const UpdateScheduleModal = ({
     setFormData({ ...formData, [name]: value });
     setCurrentPage("Home");
     setFormErrors({ ...formErrors, [name]: false });
+  };
+
+  const handleCourseSelect = (e) => {
+    const value = e.target.value;
+    const course = courses.find((course) => course.id == value);
+    const title = course ? course.name : "";
+    setFormData({ ...formData, ["title"]: title, ["course"]: value });
   };
 
   const handleSubmit = async (e) => {
@@ -392,6 +417,25 @@ const UpdateScheduleModal = ({
           </div>
           {currentPage === "Home" && (
             <div className="p-8 pt-0">
+              <div className="mb-4 mt-10">
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={formData.course}
+                  label="Course"
+                  onChange={handleCourseSelect}
+                  style={{ width: "100%" }}
+                >
+                  <MenuItem value="" disabled>
+                    Select a Course
+                  </MenuItem>
+                  {courses.map((course) => (
+                    <MenuItem key={course.id} value={course.id}>
+                      {course.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </div>
               <div className="mb-4">
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker

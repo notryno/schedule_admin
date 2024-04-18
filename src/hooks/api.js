@@ -45,6 +45,19 @@ export const getSchedules = async (userToken) => {
   }
 };
 
+export const getCourses = async (userToken) => {
+  try {
+    const response = await api.get("/courses/", {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const deleteSchedule = async (userToken, scheduleId) => {
   try {
     const response = await api.delete(`/schedule/${scheduleId}/`, {

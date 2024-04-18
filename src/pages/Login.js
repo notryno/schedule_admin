@@ -4,17 +4,18 @@ import { useAuth } from "../hooks/authContext";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const { userToken, signIn } = useAuth();
+  const { getUserToken, signIn } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const navigation = useNavigate();
+  const userToken = getUserToken();
 
   useEffect(() => {
     if (userToken !== null) {
       navigation("/");
     }
-  }, [userToken]);
+  }, []);
 
   const handleLogin = async () => {
     try {
@@ -22,6 +23,8 @@ const Login = () => {
 
       const result = await login(userData);
       signIn(result.access_token, result.profile_picture);
+      console.log(getUserToken());
+
       navigation("/");
     } catch (error) {
       setError("Login failed. Please check your credentials.");

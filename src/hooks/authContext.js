@@ -1,17 +1,14 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useEffect } from "react";
 import base64 from "base-64";
-import Cookies from "js-cookie";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [userToken, setUserToken] = useState(null);
-  const [userProfile, setUserProfile] = useState(null);
-
   useEffect(() => {
     const isTokenExpired = () => {
-      if (!userToken) return true;
-      const tokenExpiration = decodeToken(userToken).exp;
+      const storedToken = sessionStorage.getItem("userToken");
+      if (!storedToken) return true;
+      const tokenExpiration = decodeToken(storedToken).exp;
       console.log("Token expiration:", new Date(tokenExpiration * 1000));
       return Date.now() >= tokenExpiration * 1000;
     };
@@ -26,26 +23,31 @@ export const AuthProvider = ({ children }) => {
     }, 15 * 60 * 1000); // Check token expiration every 15 minutes
 
     return () => clearInterval(tokenExpirationCheckInterval);
-  }, [userToken]);
+  }, []);
 
   const decodeToken = (token) => {
     const payload = token.split(".")[1];
     return JSON.parse(base64.decode(payload));
   };
 
-  const signIn = async (token, profile) => {
-    setUserToken(token);
-    setUserProfile(profile);
-    Cookies.set("token", token, { expires: decodeToken(token).exp });
+  const signIn = (token, profile) => {
+    sessionStorage.setItem("userToken", token);
+    sessionStorage.setItem("userProfile", JSON.stringify(profile));
   };
 
   const signOut = () => {
-    setUserToken(null);
-    setUserProfile(null);
+    sessionStorage.removeItem("userToken");
+    sessionStorage.removeItem("userProfile");
   };
 
+  const getUserToken = () => sessionStorage.getItem("userToken");
+  const getUserProfile = () =>
+    JSON.parse(sessionStorage.getItem("userProfile"));
+
   return (
-    <AuthContext.Provider value={{ userToken, userProfile, signIn, signOut }}>
+    <AuthContext.Provider
+      value={{ getUserToken, getUserProfile, signIn, signOut }}
+    >
       {children}
     </AuthContext.Provider>
   );

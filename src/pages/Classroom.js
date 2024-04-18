@@ -9,7 +9,9 @@ const Classrooms = () => {
   const [classrooms, setClassrooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedClassroom, setSelectedClassroom] = useState(null);
-  const { userToken } = useAuth();
+  const { getUserToken } = useAuth();
+
+  const userToken = getUserToken();
 
   useEffect(() => {
     fetchClassroomsData();

@@ -18,7 +18,8 @@ const Teachers = () => {
   const [classrooms, setClassrooms] = useState([]);
   const [selectedTeacher, setSelectedTeacher] = useState(null);
 
-  const { userToken } = useAuth();
+  const { getUserToken } = useAuth();
+  const userToken = getUserToken();
 
   useEffect(() => {
     const fetchTeachers = async () => {

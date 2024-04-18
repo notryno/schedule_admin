@@ -17,7 +17,8 @@ const Students = () => {
   const [classrooms, setClassrooms] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState(null);
 
-  const { userToken } = useAuth();
+  const { getUserToken } = useAuth();
+  const userToken = getUserToken();
 
   useEffect(() => {
     const fetchStudents = async () => {

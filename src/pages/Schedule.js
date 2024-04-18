@@ -20,7 +20,8 @@ const Schedule = () => {
   const [updateModalIsOpen, setUpdateModalIsOpen] = useState(false);
   const [schedules, setSchedules] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { userToken } = useAuth();
+  const { getUserToken } = useAuth();
+  const userToken = getUserToken();
   const [classrooms, setClassrooms] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -40,6 +41,7 @@ const Schedule = () => {
 
     const fetchClassrooms = async () => {
       try {
+        console.log("userToken in fetchClassrooms", userToken);
         const classroomNames = await getAllClassroomNames(userToken);
         setClassrooms(classroomNames);
       } catch (error) {
@@ -343,7 +345,7 @@ const Schedule = () => {
 
 const styles = {
   container: {
-  width: "100%", 
+    width: "100%",
   },
   customHeader: {
     padding: "16px",
