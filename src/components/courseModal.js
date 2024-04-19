@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
-import { updateCourse, getAllClassroomNames } from "../hooks/api";
+import { updateCourse, getAllClassroomNames, createCourse } from "../hooks/api";
 import { useAuth } from "../hooks/authContext";
 import TextField from "@mui/material/TextField";
 import { Select as MUISelect, MenuItem, Autocomplete } from "@mui/material";
@@ -35,13 +35,14 @@ const CourseModal = ({
   onRequestClose,
   fetchAndSetCourses,
   selectedCourse,
+  type,
 }) => {
   const [formData, setFormData] = useState({
     name: "",
     code: "",
-    year: "",
-    semester: "",
-    classroom: "",
+    year: "1",
+    semester: "1",
+    classrooms: [],
   });
   const { getUserToken } = useAuth();
   const userToken = getUserToken();
@@ -67,8 +68,11 @@ const CourseModal = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log("Selected Course:", formData);
-      // await updateCourse(selectedCourse.id, userToken, formData);
+      if (type === "edit") {
+        await updateCourse(selectedCourse.id, userToken, formData);
+      } else {
+        await createCourse(userToken, formData);
+      }
       onRequestClose(false);
       fetchAndSetCourses();
       resetFormData();
@@ -78,7 +82,16 @@ const CourseModal = ({
   };
 
   const handleSelectOption = (name, value) => {
-    setFormData({ ...formData, [name]: value });
+    let updatedValue = [];
+
+    if (Array.isArray(value)) {
+      updatedValue = value;
+    } else if (value) {
+      updatedValue = [value];
+    }
+
+    console.log("Updated Value:", updatedValue);
+    setFormData({ ...formData, [name]: updatedValue });
   };
 
   useEffect(() => {
@@ -89,8 +102,14 @@ const CourseModal = ({
           code: selectedCourse.code,
           year: selectedCourse.year,
           semester: selectedCourse.semester,
-          classroom: selectedCourse.classroom,
+          classrooms: classrooms
+            .filter((classroom) =>
+              selectedCourse.classrooms.includes(classroom.id)
+            )
+            .map((classroom) => ({ ...classroom, id: classroom.id })),
         });
+
+        console.log("Course set:", formData.classrooms);
       } catch (error) {
         console.error("Error fetching course:", error);
       }
@@ -104,7 +123,7 @@ const CourseModal = ({
       code: "",
       year: "",
       semester: "",
-      classroom: [],
+      classrooms: [],
     });
   };
 
@@ -241,12 +260,16 @@ const CourseModal = ({
           <div className="mb-4">
             <Autocomplete
               multiple
+              limitTags={2}
               id="tags-outlined"
-              options={classrooms}
+              options={classrooms.filter(
+                (classroom) =>
+                  !formData.classrooms.some((c) => c.id === classroom.id)
+              )}
               getOptionLabel={(option) => option.name}
-              value={formData.classroom}
+              value={formData.classrooms}
               onChange={(event, selectedClassrooms) =>
-                handleSelectOption("classroom", selectedClassrooms)
+                handleSelectOption("classrooms", selectedClassrooms)
               }
               filterSelectedOptions
               renderInput={(params) => (

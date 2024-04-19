@@ -5,6 +5,7 @@ import { getCourses, getAllClassroomNames } from "../hooks/api";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Typography from "@mui/material/Typography";
 import Link from "@mui/material/Link";
+import Fab from "@mui/material/Fab";
 import Stack from "@mui/material/Stack";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { useAuth } from "../hooks/authContext";
@@ -16,6 +17,7 @@ const Courses = () => {
   const [loading, setLoading] = useState(true);
   const [classrooms, setClassrooms] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState(null);
+  const [type, setType] = useState("edit");
 
   const { getUserToken } = useAuth();
   const userToken = getUserToken();
@@ -138,6 +140,7 @@ const Courses = () => {
 
   const handleEdit = (record) => {
     setSelectedCourse(record);
+    setType("edit");
     setModalIsOpen(true);
   };
 
@@ -148,11 +151,41 @@ const Courses = () => {
   return (
     <>
       <div style={styles.container}>
+        {!modalIsOpen && (
+          <Fab
+            aria-label="add"
+            style={{
+              position: "fixed",
+              bottom: "20px",
+              right: "20px",
+            }}
+            onClick={() => {
+              setType("add");
+              setModalIsOpen(true);
+            }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6 mx-auto"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
+          </Fab>
+        )}
         <CourseModal
           isOpen={modalIsOpen}
           onRequestClose={() => setModalIsOpen(false)}
           selectedCourse={selectedCourse}
           fetchAndSetCourses={fetchAndSetCourses}
+          type={type}
         />
         <div style={styles.customHeader}>
           <h1 style={styles.headerTitle}>Courses</h1>

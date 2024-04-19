@@ -114,7 +114,27 @@ export const updateUser = async (userId, userToken, formData) => {
 
 export const updateCourse = async (courseId, userToken, formData) => {
   try {
-    const response = await api.patch(`/course/${courseId}/`, formData, {
+    const classroomIds = formData.classrooms.map((classroom) => classroom.id);
+    const updatedFormData = { ...formData, classrooms: classroomIds };
+
+    console.log("Updated formData for PATCH:", updatedFormData);
+    const response = await api.patch(`/courses/${courseId}/`, updatedFormData, {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const createCourse = async (userToken, formData) => {
+  try {
+    const classroomIds = formData.classrooms.map((classroom) => classroom.id);
+    const updatedFormData = { ...formData, classrooms: classroomIds };
+    const response = await api.post("/course/", updatedFormData, {
       headers: {
         Authorization: `Bearer ${userToken}`,
         "Content-Type": "application/json",
