@@ -233,7 +233,6 @@ const Schedule = () => {
   const onChange = (pagination, filters, sorter, extra) => {
     setCurrentPage(pagination.current);
     setPageSize(pagination.pageSize);
-    console.log("params", pagination, filters, sorter, extra);
   };
 
   const handleEdit = (record) => {

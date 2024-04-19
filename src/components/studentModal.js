@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
-import { createStudent, getAllClassroomNames } from "../hooks/api";
+import { updateUser, getAllClassroomNames } from "../hooks/api";
 import { useAuth } from "../hooks/authContext";
 import TextField from "@mui/material/TextField";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -44,7 +44,8 @@ const StudentModal = ({
     lastName: "",
     classroom: "",
   });
-  const { userToken } = useAuth();
+  const { getUserToken } = useAuth();
+  const userToken = getUserToken();
   const [classrooms, setClassrooms] = useState([]);
   const [currentPage, setCurrentPage] = useState("Home");
 
@@ -68,7 +69,9 @@ const StudentModal = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      //   await createStudent(userToken, formData);
+      console.log("Selected Student:", formData);
+
+      await updateUser(selectedStudent.id, userToken, formData);
       console.log("Student created successfully!");
       onRequestClose(false);
       fetchAndSetStudents();

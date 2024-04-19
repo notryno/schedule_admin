@@ -14,11 +14,18 @@ const Students = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [classrooms, setClassrooms] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState(null);
 
   const { getUserToken } = useAuth();
   const userToken = getUserToken();
+
+  const onChange = (pagination, filters, sorter, extra) => {
+    setCurrentPage(pagination.current);
+    setPageSize(pagination.pageSize);
+  };
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -59,6 +66,12 @@ const Students = () => {
   };
 
   const columns = [
+    {
+      title: "#",
+      dataIndex: "id",
+      key: "id",
+      render: (_, __, index) => (currentPage - 1) * pageSize + index + 1,
+    },
     {
       title: "Profile Picture",
       dataIndex: "profile_picture",
@@ -153,7 +166,11 @@ const Students = () => {
           dataSource={students}
           columns={columns}
           loading={loading}
-          rowKey="email"
+          rowKey="id"
+          pagination={{
+            position: ["bottomCenter"],
+          }}
+          onChange={onChange}
         />
       </div>
     </>

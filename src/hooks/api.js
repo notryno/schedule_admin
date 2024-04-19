@@ -98,6 +98,34 @@ export const getStudents = async (userToken) => {
   }
 };
 
+export const updateUser = async (userId, userToken, formData) => {
+  try {
+    const response = await api.patch(`/user/${userId}/`, formData, {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateCourse = async (courseId, userToken, formData) => {
+  try {
+    const response = await api.patch(`/course/${courseId}/`, formData, {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getTeachers = async (userToken) => {
   try {
     const response = await api.get("/teachers/", {
