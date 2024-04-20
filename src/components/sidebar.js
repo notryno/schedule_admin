@@ -8,17 +8,28 @@ import {
   EditCalendarOutlined,
   ClassOutlined,
   BadgeOutlined,
+  LogoutOutlined,
 } from "@mui/icons-material";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/authContext";
 
 function Sidebar({ isOpen, toggleSidebar }) {
   const location = useLocation();
   const currentPath = location.pathname;
 
+  const navigate = useNavigate();
+
+  const { signOut } = useAuth();
+
   const toggleisOpen = () => {
     toggleSidebar(!isOpen);
+  };
+
+  const handleSignOut = () => {
+    signOut();
+    navigate("/login");
   };
 
   const navItems = [
@@ -67,9 +78,13 @@ function Sidebar({ isOpen, toggleSidebar }) {
     borderRadius: 10,
   };
 
+  if (currentPath === "/login") {
+    return null;
+  }
+
   return (
     <div
-      className="w-20 z-50"
+      className="w-20 z-49"
       style={{ height: "100vh", width: isOpen ? "13%" : "8%" }}
     >
       <div
@@ -135,6 +150,12 @@ function Sidebar({ isOpen, toggleSidebar }) {
               </div>
             </Link>
           ))}
+          <div
+            onClick={handleSignOut}
+            style={{ marginTop: 16, cursor: "pointer" }}
+          >
+            <LogoutOutlined />
+          </div>
         </div>
       </div>
     </div>

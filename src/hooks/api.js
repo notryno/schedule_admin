@@ -85,6 +85,44 @@ export const editSchedule = async (userToken, scheduleId, formData) => {
   }
 };
 
+export const createUser = async (userToken, newformData, file) => {
+  try {
+    const formData = new FormData();
+
+    formData.append("first_name", newformData.firstName);
+    formData.append("last_name", newformData.lastName);
+    formData.append("username", newformData.email);
+    formData.append("email", newformData.email);
+    formData.append("password", newformData.password);
+    if (newformData.profile_picture) {
+      formData.append("profile_picture", {
+        uri: file,
+        type: "image/jpeg",
+        name: newformData.profile_picture.name,
+      });
+    }
+    delete formData.firstName;
+    delete formData.lastName;
+    console.log("formData:", formData);
+
+    // const form = new FormData();
+    // Object.keys(formData).forEach((key) => {
+    //   form.append(key, formData[key]);
+    // });
+    // console.log("form:", form);
+
+    const response = await api.post("/register/", formData, {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getStudents = async (userToken) => {
   try {
     const response = await api.get("/students/", {

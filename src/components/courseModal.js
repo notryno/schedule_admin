@@ -3,7 +3,13 @@ import Modal from "react-modal";
 import { updateCourse, getAllClassroomNames, createCourse } from "../hooks/api";
 import { useAuth } from "../hooks/authContext";
 import TextField from "@mui/material/TextField";
-import { Select as MUISelect, MenuItem, Autocomplete } from "@mui/material";
+import {
+  Select as MUISelect,
+  MenuItem,
+  Autocomplete,
+  InputLabel,
+  FormControl,
+} from "@mui/material";
 
 const customStyles = {
   overlay: {
@@ -210,52 +216,63 @@ const CourseModal = ({
             />
           </div>
           <div className="mb-4">
-            <MUISelect
-              id="year"
-              name="year"
-              label="Year"
-              value={formData.year}
-              onChange={handleChange}
-              variant="outlined"
+            <FormControl
               className={`mt-1 block w-full px-3 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
             >
-              <MenuItem value={1}>I</MenuItem>
-              <MenuItem value={2}>II</MenuItem>
-              <MenuItem value={3}>III</MenuItem>
-              <MenuItem value={4}>IV</MenuItem>
-              <MenuItem value={5}>V</MenuItem>
-              <MenuItem value={6}>VI</MenuItem>
-              <MenuItem value={7}>VII</MenuItem>
-              <MenuItem value={8}>VIII</MenuItem>
-              <MenuItem value={9}>IX</MenuItem>
-              <MenuItem value={10}>X</MenuItem>
-              {/* Add more MenuItems for higher Roman numerals if needed */}
-            </MUISelect>
+              <InputLabel>Year</InputLabel>
+              <MUISelect
+                id="year"
+                name="year"
+                label="Year"
+                value={formData.year}
+                onChange={handleChange}
+                variant="outlined"
+                className={`mt-1 block w-full px-3 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+              >
+                <MenuItem value={1}>I</MenuItem>
+                <MenuItem value={2}>II</MenuItem>
+                <MenuItem value={3}>III</MenuItem>
+                <MenuItem value={4}>IV</MenuItem>
+                <MenuItem value={5}>V</MenuItem>
+                <MenuItem value={6}>VI</MenuItem>
+                <MenuItem value={7}>VII</MenuItem>
+                <MenuItem value={8}>VIII</MenuItem>
+                <MenuItem value={9}>IX</MenuItem>
+                <MenuItem value={10}>X</MenuItem>
+                {/* Add more MenuItems for higher Roman numerals if needed */}
+              </MUISelect>
+            </FormControl>
           </div>
 
           <div className="mb-4">
-            <MUISelect
-              id="semester"
-              name="semester"
-              label="Semester"
-              value={formData.semester}
-              onChange={handleChange}
-              variant="outlined"
+            <FormControl
               className={`mt-1 block w-full px-3 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
             >
-              <MenuItem value={1}>First</MenuItem>
-              <MenuItem value={2}>Second</MenuItem>
-              <MenuItem value={3}>Third</MenuItem>
-              <MenuItem value={4}>Fourth</MenuItem>
-              <MenuItem value={5}>Fifth</MenuItem>
-              <MenuItem value={6}>Sixth</MenuItem>
-              <MenuItem value={7}>Seventh</MenuItem>
-              <MenuItem value={8}>Eighth</MenuItem>
-              <MenuItem value={9}>Ninth</MenuItem>
-              <MenuItem value={10}>Tenth</MenuItem>
-              <MenuItem value={11}>Eleventh</MenuItem>
-              <MenuItem value={12}>Twelfth</MenuItem>
-            </MUISelect>
+              <InputLabel>Semester</InputLabel>
+              <MUISelect
+                id="semester"
+                name="semester"
+                label="Semester"
+                labelWidth={"text".length * 9}
+                value={formData.semester}
+                onChange={handleChange}
+                variant="outlined"
+                className={`mt-1 block w-full px-3 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+              >
+                <MenuItem value={1}>First</MenuItem>
+                <MenuItem value={2}>Second</MenuItem>
+                <MenuItem value={3}>Third</MenuItem>
+                <MenuItem value={4}>Fourth</MenuItem>
+                <MenuItem value={5}>Fifth</MenuItem>
+                <MenuItem value={6}>Sixth</MenuItem>
+                <MenuItem value={7}>Seventh</MenuItem>
+                <MenuItem value={8}>Eighth</MenuItem>
+                <MenuItem value={9}>Ninth</MenuItem>
+                <MenuItem value={10}>Tenth</MenuItem>
+                <MenuItem value={11}>Eleventh</MenuItem>
+                <MenuItem value={12}>Twelfth</MenuItem>
+              </MUISelect>
+            </FormControl>
           </div>
           <div className="mb-4">
             <Autocomplete

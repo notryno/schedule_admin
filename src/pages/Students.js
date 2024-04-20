@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Table, Avatar, Tag, Space, Button, Modal } from "antd";
 import { getStudents, getAllClassroomNames } from "../hooks/api";
+import { BASE_URL } from "../hooks/authApi";
+import { UserOutlined } from "@ant-design/icons";
 
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Typography from "@mui/material/Typography";
@@ -9,6 +11,7 @@ import Stack from "@mui/material/Stack";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { useAuth } from "../hooks/authContext";
 import StudentModal from "../components/studentModal";
+import Fab from "@mui/material/Fab";
 
 const Students = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -18,9 +21,12 @@ const Students = () => {
   const [pageSize, setPageSize] = useState(10);
   const [classrooms, setClassrooms] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState(null);
+  const [type, setType] = useState("edit");
 
   const { getUserToken } = useAuth();
   const userToken = getUserToken();
+
+  const modifiedURL = BASE_URL.replace(/\/api\/$/, "");
 
   const onChange = (pagination, filters, sorter, extra) => {
     setCurrentPage(pagination.current);
@@ -56,7 +62,6 @@ const Students = () => {
   const fetchAndSetStudents = async () => {
     try {
       const data = await getStudents(userToken);
-      console.log("In fetchAndSetStudents");
       setStudents(data);
       setLoading(false);
     } catch (error) {
@@ -76,7 +81,9 @@ const Students = () => {
       title: "Profile Picture",
       dataIndex: "profile_picture",
       key: "profile_picture",
-      render: (imageUrl) => <Avatar src={imageUrl} />,
+      render: (imageUrl) => (
+        <Avatar src={modifiedURL + imageUrl} icon={<UserOutlined />} />
+      ),
     },
     {
       title: "Email",
@@ -144,6 +151,7 @@ const Students = () => {
 
   const handleEdit = (record) => {
     setSelectedStudent(record);
+    setType("edit");
     setModalIsOpen(true);
   };
 
@@ -152,11 +160,41 @@ const Students = () => {
   return (
     <>
       <div style={styles.container}>
+        {!modalIsOpen && (
+          <Fab
+            aria-label="add"
+            style={{
+              position: "fixed",
+              bottom: "20px",
+              right: "20px",
+            }}
+            onClick={() => {
+              setType("add");
+              setModalIsOpen(true);
+            }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6 mx-auto"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
+          </Fab>
+        )}
         <StudentModal
           isOpen={modalIsOpen}
           onRequestClose={() => setModalIsOpen(false)}
           selectedStudent={selectedStudent}
           fetchAndSetStudents={fetchAndSetStudents}
+          type={type}
         />
         <div style={styles.customHeader}>
           <h1 style={styles.headerTitle}>Students</h1>

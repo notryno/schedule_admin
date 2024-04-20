@@ -70,6 +70,7 @@ const styles = {
     flexDirection: "column",
     alignItems: "center",
     width: "100%",
+    zIndex: 50,
   },
   title: {
     fontSize: 24,

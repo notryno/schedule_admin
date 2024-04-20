@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
-import { updateUser, getAllClassroomNames } from "../hooks/api";
+import { updateUser, getAllClassroomNames, createUser } from "../hooks/api";
 import { useAuth } from "../hooks/authContext";
 import TextField from "@mui/material/TextField";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleCheck } from "@fortawesome/free-regular-svg-icons";
+import { Upload, message, Image } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
+import ImgCrop from "antd-img-crop";
 
 const customStyles = {
   overlay: {
@@ -36,6 +37,7 @@ const StudentModal = ({
   onRequestClose,
   fetchAndSetStudents,
   selectedStudent,
+  type,
 }) => {
   const [formData, setFormData] = useState({
     email: "",
@@ -43,11 +45,15 @@ const StudentModal = ({
     firstName: "",
     lastName: "",
     classroom: "",
+    profile_picture: null,
   });
   const { getUserToken } = useAuth();
   const userToken = getUserToken();
   const [classrooms, setClassrooms] = useState([]);
   const [currentPage, setCurrentPage] = useState("Home");
+  const [fileList, setFileList] = useState([]);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState("");
 
   useEffect(() => {
     const fetchClassrooms = async () => {
@@ -66,12 +72,38 @@ const StudentModal = ({
     setFormData({ ...formData, [name]: value });
   };
 
+  const handleImageChange = (info) => {
+    const { file } = info;
+    if (file.status === "removed") {
+      return;
+    }
+    console.log("file:", file.status);
+    setFormData({ ...formData, profile_picture: file.originFileObj });
+    setFileList([file]);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log("Selected Student:", formData);
+      const { profile_picture, ...restFormData } = formData;
+      const fileName = profile_picture ? profile_picture.name : "";
+      const profile_picture_data = profile_picture
+        ? { uri: profile_picture, type: "image/jpeg", name: fileName }
+        : null;
+      const formDataWithPicture = profile_picture_data
+        ? { ...restFormData, profile_picture: profile_picture_data }
+        : restFormData;
 
-      await updateUser(selectedStudent.id, userToken, formData);
+      const file = await getBase64(profile_picture);
+
+      console.log("formDataWithPicture:", formDataWithPicture);
+      if (type === "edit") {
+        await updateUser(selectedStudent.id, userToken, formData, file);
+      } else {
+        console.log(restFormData);
+        await createUser(userToken, formData, file);
+      }
+
       console.log("Student created successfully!");
       onRequestClose(false);
       fetchAndSetStudents();
@@ -106,7 +138,6 @@ const StudentModal = ({
           lastName: selectedStudent.last_name,
           classroom: selectedStudent.classroom,
         });
-        console.log(formData);
       } catch (error) {
         console.error("Error fetching student:", error);
       }
@@ -121,13 +152,58 @@ const StudentModal = ({
       firstName: "",
       lastName: "",
       classroom: "",
+      profile_picture: null,
     });
   };
+
+  const handlePreview = async (file) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj);
+    }
+    setPreviewImage(file.url || file.preview);
+    setPreviewOpen(true);
+  };
+
+  const getBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
+  const handleRemove = (file) => {
+    setFileList([]);
+    setFormData({ ...formData, profile_picture: null });
+  };
+
+  const uploadButton = (
+    <button
+      style={{
+        border: 0,
+        background: "none",
+      }}
+      type="button"
+    >
+      <PlusOutlined />
+      <div
+        style={{
+          marginTop: 8,
+        }}
+      >
+        Upload
+      </div>
+    </button>
+  );
 
   return (
     <Modal
       isOpen={isOpen}
-      onRequestClose={onRequestClose}
+      onRequestClose={() => {
+        onRequestClose(false);
+        resetFormData();
+      }}
       style={customStyles}
       contentLabel="Update Schedule Modal"
     >
@@ -219,6 +295,38 @@ const StudentModal = ({
 
         {currentPage === "Home" && (
           <div className="p-8 pt-0">
+            <div className="mb-4 flex items-center justify-center">
+              <div style={{ borderWidth: 2, height: 200, width: 200 }}>
+                <ImgCrop>
+                  <Upload
+                    listType="picture-circle"
+                    customRequest={({ onSuccess }) => onSuccess("ok")}
+                    fileList={fileList}
+                    onChange={handleImageChange}
+                    style={{ width: 200 }}
+                    onPreview={handlePreview}
+                    onRemove={handleRemove}
+                  >
+                    {fileList.length < 1 && uploadButton}
+                  </Upload>
+                </ImgCrop>
+                {previewImage && (
+                  <Image
+                    wrapperStyle={{
+                      display: "none",
+                    }}
+                    preview={{
+                      visible: previewOpen,
+                      onVisibleChange: (visible) => setPreviewOpen(visible),
+                      afterOpenChange: (visible) =>
+                        !visible && setPreviewImage(""),
+                    }}
+                    src={previewImage}
+                  />
+                )}
+              </div>
+            </div>
+
             <div className="mb-4">
               <TextField
                 type="text"
