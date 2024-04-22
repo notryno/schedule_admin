@@ -155,6 +155,9 @@ function Sidebar({ isOpen, toggleSidebar }) {
             style={{ marginTop: 16, cursor: "pointer" }}
           >
             <LogoutOutlined />
+            {isOpen && (
+              <span style={{ marginLeft: 10, fontSize: 16 }}>Logout</span>
+            )}
           </div>
         </div>
       </div>

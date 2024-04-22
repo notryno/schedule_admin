@@ -6,6 +6,7 @@ import TextField from "@mui/material/TextField";
 import { Upload, message, Image } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import ImgCrop from "antd-img-crop";
+import "../styles/modal.css";
 
 const customStyles = {
   overlay: {
@@ -296,16 +297,24 @@ const StudentModal = ({
         {currentPage === "Home" && (
           <div className="p-8 pt-0">
             <div className="mb-4 flex items-center justify-center">
-              <div style={{ borderWidth: 2, height: 200, width: 200 }}>
+              <div
+                className="flex justify-between items-center w-full"
+                style={{
+                  height: 200,
+                  width: 200,
+                  justifyContent: "center",
+                  display: "flex",
+                }}
+              >
                 <ImgCrop>
                   <Upload
                     listType="picture-circle"
                     customRequest={({ onSuccess }) => onSuccess("ok")}
                     fileList={fileList}
                     onChange={handleImageChange}
-                    style={{ width: 200 }}
                     onPreview={handlePreview}
                     onRemove={handleRemove}
+                    className={"customSizedUpload"}
                   >
                     {fileList.length < 1 && uploadButton}
                   </Upload>

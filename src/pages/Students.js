@@ -12,6 +12,7 @@ import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { useAuth } from "../hooks/authContext";
 import StudentModal from "../components/studentModal";
 import Fab from "@mui/material/Fab";
+import { CheckCircleTwoTone, WarningTwoTone } from "@mui/icons-material";
 
 const Students = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -89,7 +90,22 @@ const Students = () => {
       title: "Email",
       dataIndex: "email",
       key: "email",
+      render: (email, record) => {
+        const iconColor = record.email_verified ? "green" : "red";
+        const icon = record.email_verified ? (
+          <CheckCircleTwoTone twoToneColor="green" />
+        ) : (
+          <WarningTwoTone twoToneColor="red" />
+        );
+        return (
+          <Tag color={iconColor} style={{ cursor: "default" }}>
+            <span style={{ marginLeft: "5px" }}>{email}</span>
+            {icon}
+          </Tag>
+        );
+      },
     },
+
     {
       title: "Username",
       dataIndex: "username",

@@ -1,0 +1,11 @@
+.ant-upload-wrapper.ant-upload-picture-circle-wrapper
+  .ant-upload.ant-upload-select {
+  width: 200px !important;
+  height: 200px !important;
+}
+
+.ant-upload-list-item {
+  width: 200px !important;
+  height: 200px !important;
+  top: -45px !important;
+}
