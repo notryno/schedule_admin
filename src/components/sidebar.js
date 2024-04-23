@@ -108,7 +108,7 @@ function Sidebar({ isOpen, toggleSidebar }) {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          padding: "10% 0",
+          padding: "5% 0",
           borderRadius: "20px",
         }}
         className="drop-shadow-lg"
