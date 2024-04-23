@@ -86,23 +86,22 @@ const StudentModal = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { profile_picture, ...restFormData } = formData;
-      const fileName = profile_picture ? profile_picture.name : "";
-      const profile_picture_data = profile_picture
-        ? { uri: profile_picture, type: "image/jpeg", name: fileName }
-        : null;
-      const formDataWithPicture = profile_picture_data
-        ? { ...restFormData, profile_picture: profile_picture_data }
-        : restFormData;
+      // const { profile_picture, ...restFormData } = formData;
+      // const fileName = profile_picture ? profile_picture.name : "";
+      // const profile_picture_data = profile_picture
+      //   ? { uri: profile_picture, type: "image/jpeg", name: fileName }
+      //   : null;
+      // const formDataWithPicture = profile_picture_data
+      //   ? { ...restFormData, profile_picture: profile_picture_data }
+      //   : restFormData;
 
-      const file = await getBase64(profile_picture);
+      // const file = await getBase64(profile_picture);
 
-      console.log("formDataWithPicture:", formDataWithPicture);
+      // console.log("formDataWithPicture:", formDataWithPicture);
       if (type === "edit") {
-        await updateUser(selectedStudent.id, userToken, formData, file);
+        await updateUser(selectedStudent.id, userToken, formData);
       } else {
-        console.log(restFormData);
-        await createUser(userToken, formData, file);
+        // await createUser(userToken, formData, file);
       }
 
       console.log("Student created successfully!");

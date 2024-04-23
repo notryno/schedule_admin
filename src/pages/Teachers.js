@@ -27,6 +27,8 @@ const Teachers = () => {
   const [type, setType] = useState("edit");
   const [courses, setCourses] = useState([]);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const modifiedURL = BASE_URL.replace(/\/api\/$/, "");
 
@@ -71,7 +73,18 @@ const Teachers = () => {
     }
   };
 
+  const onChange = (pagination, filters, sorter, extra) => {
+    setCurrentPage(pagination.current);
+    setPageSize(pagination.pageSize);
+  };
+
   const columns = [
+    {
+      title: "#",
+      dataIndex: "id",
+      key: "id",
+      render: (_, __, index) => (currentPage - 1) * pageSize + index + 1,
+    },
     {
       title: "Profile Picture",
       dataIndex: "profile_picture",
@@ -254,6 +267,12 @@ const Teachers = () => {
           columns={columns}
           loading={loading}
           rowKey="email"
+          pagination={{
+            position: ["bottomCenter"],
+            current: currentPage,
+            pageSize: pageSize,
+          }}
+          onChange={onChange}
         />
       </div>
     </>

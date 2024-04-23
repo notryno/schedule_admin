@@ -18,6 +18,8 @@ const Classrooms = () => {
   const { getUserToken } = useAuth();
   const [type, setType] = useState("edit");
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const userToken = getUserToken();
 
@@ -38,6 +40,12 @@ const Classrooms = () => {
   };
 
   const columns = [
+    {
+      title: "#",
+      dataIndex: "id",
+      key: "id",
+      render: (_, __, index) => (currentPage - 1) * pageSize + index + 1,
+    },
     {
       title: "Name",
       dataIndex: "name",
@@ -70,6 +78,11 @@ const Classrooms = () => {
   const handleEdit = (record) => {
     setSelectedClassroom(record);
     setModalIsOpen(true);
+  };
+
+  const onChange = (pagination, filters, sorter, extra) => {
+    setCurrentPage(pagination.current);
+    setPageSize(pagination.pageSize);
   };
 
   const handleDelete = (id) => {
@@ -186,6 +199,12 @@ const Classrooms = () => {
           columns={columns}
           loading={loading}
           rowKey="id"
+          pagination={{
+            position: ["bottomCenter"],
+            current: currentPage,
+            pageSize: pageSize,
+          }}
+          onChange={onChange}
         />
       </div>
     </>

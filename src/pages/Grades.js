@@ -33,6 +33,8 @@ const Grades = () => {
   const [courseFilters, setCourseFilters] = useState([]);
   const [courses, setCourses] = useState([]);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const [type, setType] = useState("edit");
 
@@ -68,6 +70,11 @@ const Grades = () => {
     } catch (error) {
       console.error("Error fetching grades:", error);
     }
+  };
+
+  const onChange = (pagination, filters, sorter, extra) => {
+    setCurrentPage(pagination.current);
+    setPageSize(pagination.pageSize);
   };
 
   const fetchCourses = async () => {
@@ -108,6 +115,12 @@ const Grades = () => {
   };
 
   const columns = [
+    {
+      title: "#",
+      dataIndex: "id",
+      key: "id",
+      render: (_, __, index) => (currentPage - 1) * pageSize + index + 1,
+    },
     {
       title: "Student Email",
       dataIndex: "student",
@@ -293,6 +306,12 @@ const Grades = () => {
           dataSource={grades}
           columns={columns}
           rowKey="id"
+          pagination={{
+            position: ["bottomCenter"],
+            current: currentPage,
+            pageSize: pageSize,
+          }}
+          onChange={onChange}
         />
         {selectedStudent && !modalIsOpen && (
           <Fab

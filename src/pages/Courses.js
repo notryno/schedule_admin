@@ -22,6 +22,8 @@ const Courses = () => {
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [type, setType] = useState("edit");
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const { getUserToken } = useAuth();
   const userToken = getUserToken();
@@ -62,12 +64,17 @@ const Courses = () => {
     }
   };
 
+  const onChange = (pagination, filters, sorter, extra) => {
+    setCurrentPage(pagination.current);
+    setPageSize(pagination.pageSize);
+  };
+
   const columns = [
     {
       title: "#",
       dataIndex: "id",
       key: "id",
-      render: (_, __, index) => index + 1,
+      render: (_, __, index) => (currentPage - 1) * pageSize + index + 1,
     },
     {
       title: "Name",
@@ -234,7 +241,10 @@ const Courses = () => {
           rowKey="id"
           pagination={{
             position: ["bottomCenter"],
+            current: currentPage,
+            pageSize: pageSize,
           }}
+          onChange={onChange}
         />
       </div>
     </>
