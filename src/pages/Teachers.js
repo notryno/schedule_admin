@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Table, Avatar, Tag, Space, Button, Modal } from "antd";
 import { getTeachers, getAllClassroomNames, getCourses } from "../hooks/api";
 import Fab from "@mui/material/Fab";
+import { BASE_URL } from "../hooks/authApi";
 
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Typography from "@mui/material/Typography";
@@ -10,6 +11,8 @@ import Stack from "@mui/material/Stack";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { useAuth } from "../hooks/authContext";
 import TeacherModal from "../components/teacherModal";
+import { UserOutlined } from "@ant-design/icons";
+import { CheckCircleTwoTone, WarningTwoTone } from "@mui/icons-material";
 
 const Teachers = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -19,6 +22,8 @@ const Teachers = () => {
   const [selectedTeacher, setSelectedTeacher] = useState(null);
   const [type, setType] = useState("edit");
   const [courses, setCourses] = useState([]);
+
+  const modifiedURL = BASE_URL.replace(/\/api\/$/, "");
 
   const { getUserToken } = useAuth();
   const userToken = getUserToken();
@@ -66,12 +71,28 @@ const Teachers = () => {
       title: "Profile Picture",
       dataIndex: "profile_picture",
       key: "profile_picture",
-      render: (imageUrl) => <Avatar src={imageUrl} />,
+      render: (imageUrl) => (
+        <Avatar src={modifiedURL + imageUrl} icon={<UserOutlined />} />
+      ),
     },
     {
       title: "Email",
       dataIndex: "email",
       key: "email",
+      render: (email, record) => {
+        const iconColor = record.email_verified ? "green" : "red";
+        const icon = record.email_verified ? (
+          <CheckCircleTwoTone twoToneColor="green" />
+        ) : (
+          <WarningTwoTone twoToneColor="red" />
+        );
+        return (
+          <Tag color={iconColor} style={{ cursor: "default" }}>
+            <span style={{ marginLeft: "5px" }}>{email}</span>
+            {icon}
+          </Tag>
+        );
+      },
     },
     {
       title: "Username",
@@ -141,7 +162,7 @@ const Teachers = () => {
   );
 
   const handleEdit = (record) => {
-    console.log("Edit teacher:", record);
+    setType("edit");
     setSelectedTeacher(record);
     setModalIsOpen(true);
   };

@@ -124,8 +124,18 @@ const CourseModal = ({
         console.error("Error fetching course:", error);
       }
     };
-    fetchCourse();
-  }, [selectedCourse]);
+    if (isOpen && type === "edit") {
+      fetchCourse();
+    } else {
+      setFormData({
+        name: "",
+        code: "",
+        year: "",
+        semester: "",
+        classrooms: [],
+      });
+    }
+  }, [isOpen, selectedCourse]);
 
   const resetFormData = () => {
     setFormData({
@@ -140,7 +150,10 @@ const CourseModal = ({
   return (
     <Modal
       isOpen={isOpen}
-      onRequestClose={onRequestClose}
+      onRequestClose={() => {
+        onRequestClose();
+        resetFormData();
+      }}
       style={customStyles}
       contentLabel="Update Course Modal"
     >

@@ -348,4 +348,21 @@ export const updateTeacher = async (teacherId, userToken, formData) => {
   }
 };
 
+export const createTeacher = async (userToken, formData) => {
+  try {
+    const courseIds = formData.courses.map((course) => course.id);
+    const updatedFormData = { ...formData, courses: courseIds };
+
+    const response = await api.post("/teacher/", updatedFormData, {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default api;

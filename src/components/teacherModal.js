@@ -35,6 +35,7 @@ const TeacherModal = ({
   onRequestClose,
   fetchAndSetTeachers,
   selectedTeacher,
+  type,
 }) => {
   const [formData, setFormData] = useState({
     email: "",
@@ -69,7 +70,11 @@ const TeacherModal = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await updateTeacher(selectedTeacher.id, userToken, formData);
+      if (type === "edit") {
+        await updateTeacher(selectedTeacher.id, userToken, formData);
+      } else {
+        await createTeacher(userToken, formData);
+      }
       console.log("Teacher updated successfully!");
       console.log(formData);
       onRequestClose(false);
@@ -113,8 +118,18 @@ const TeacherModal = ({
         console.error("Error fetching teacher:", error);
       }
     };
-    fetchTeacher();
-  }, [selectedTeacher]);
+    if (isOpen && type === "edit") {
+      fetchTeacher();
+    } else {
+      setFormData({
+        email: "",
+        username: "",
+        firstName: "",
+        lastName: "",
+        courses: [],
+      });
+    }
+  }, [isOpen, selectedTeacher]);
 
   const resetFormData = () => {
     setFormData({
@@ -130,7 +145,10 @@ const TeacherModal = ({
   return (
     <Modal
       isOpen={isOpen}
-      onRequestClose={onRequestClose}
+      onRequestClose={() => {
+        onRequestClose();
+        resetFormData();
+      }}
       style={customStyles}
       contentLabel="Update Schedule Modal"
     >
@@ -143,6 +161,7 @@ const TeacherModal = ({
             <button
               onClick={(e) => {
                 e.preventDefault();
+                resetFormData();
                 onRequestClose(false);
               }}
               className="text-gray-400 hover:text-gray-500 focus:outline-none"
