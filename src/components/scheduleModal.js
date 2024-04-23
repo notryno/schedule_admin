@@ -16,6 +16,7 @@ import {
   DatePicker,
 } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { FormControl, InputLabel } from "@mui/material";
 
 const customStyles = {
   overlay: {
@@ -390,23 +391,27 @@ const ScheduleModal = ({ isOpen, onRequestClose, fetchAndSetSchedules }) => {
           {currentPage === "Home" && (
             <div className="p-8 pt-0">
               <div className="mb-4 mt-10">
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={formData.course}
-                  label="Course"
-                  onChange={handleCourseSelect}
-                  style={{ width: "100%" }}
-                >
-                  <MenuItem value="" disabled>
-                    Select a Course
-                  </MenuItem>
-                  {courses.map((course) => (
-                    <MenuItem key={course.id} value={course.id}>
-                      {course.name}
+                <FormControl variant="outlined" className="w-full">
+                  <InputLabel id="course-label">Course</InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={formData.course}
+                    label="Course"
+                    placeholder="Course"
+                    onChange={handleCourseSelect}
+                    style={{ width: "100%" }}
+                  >
+                    <MenuItem value="" disabled>
+                      Select a Course
                     </MenuItem>
-                  ))}
-                </Select>
+                    {courses.map((course) => (
+                      <MenuItem key={course.id} value={course.id}>
+                        {course.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </div>
               <div className="mb-4">
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
