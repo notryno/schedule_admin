@@ -14,6 +14,10 @@ import Typography from "@mui/material/Typography";
 import Link from "@mui/material/Link";
 import Stack from "@mui/material/Stack";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+import { Button as MuiButton } from "@mui/material";
+import { FileDownloadOutlined } from "@mui/icons-material";
 
 const Schedule = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -26,6 +30,7 @@ const Schedule = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [selectedSchedule, setSelectedSchedule] = useState(null);
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
 
   useEffect(() => {
     const fetchSchedules = async () => {
@@ -63,6 +68,21 @@ const Schedule = () => {
       console.error("Error fetching schedules:", error);
       setLoading(false);
     }
+  };
+
+  const handleExportPDF = () => {
+    setIsGeneratingPDF(true);
+
+    const input = document.getElementById("schedule-table");
+    html2canvas(input).then((canvas) => {
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
+      const imgWidth = 210;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+      pdf.save("schedule.pdf");
+      setIsGeneratingPDF(false);
+    });
   };
 
   const columns = [
@@ -221,10 +241,14 @@ const Schedule = () => {
       key: "action",
       render: (_, record) => (
         <Space size="middle">
-          <Button onClick={() => handleEdit(record)}>Edit</Button>
-          <Button danger onClick={() => handleDelete(record.id)}>
-            Delete
-          </Button>
+          {!isGeneratingPDF && (
+            <>
+              <Button onClick={() => handleEdit(record)}>Edit</Button>
+              <Button danger onClick={() => handleDelete(record.id)}>
+                Delete
+              </Button>
+            </>
+          )}
         </Space>
       ),
     },
@@ -323,16 +347,36 @@ const Schedule = () => {
       </div>
       <div className="z-40" style={styles.container}>
         <div style={styles.customHeader}>
-          <h1 style={styles.headerTitle}>Schedules</h1>
-          {breadcrumbs}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <div>
+              <h1 style={styles.headerTitle}>Schedules</h1>
+              {breadcrumbs}
+            </div>
+            <div style={{ marginLeft: "auto" }}>
+              <MuiButton onClick={handleExportPDF} variant="outlined">
+                <FileDownloadOutlined style={{ marginRight: "5px" }} />
+                Download PDF
+              </MuiButton>
+            </div>
+          </div>
         </div>
+
         <Table
+          id="schedule-table"
           dataSource={schedules}
           columns={columns}
           loading={loading}
           rowKey="id"
           pagination={{
             position: ["bottomCenter"],
+            current: currentPage,
+            pageSize: pageSize,
           }}
           onChange={onChange}
           className="z-1"
@@ -354,6 +398,10 @@ const styles = {
     fontSize: "24px",
     fontWeight: "bold",
     marginBottom: "8px",
+  },
+  exportButtonContainer: {
+    textAlign: "center",
+    margin: "20px 0",
   },
 };
 

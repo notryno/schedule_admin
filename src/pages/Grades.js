@@ -13,6 +13,10 @@ import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Typography from "@mui/material/Typography";
 import Link from "@mui/material/Link";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+import { Button as MuiButton } from "@mui/material";
+import { FileDownloadOutlined } from "@mui/icons-material";
 
 import Stack from "@mui/material/Stack";
 
@@ -28,6 +32,7 @@ const Grades = () => {
   const { getUserToken } = useAuth();
   const [courseFilters, setCourseFilters] = useState([]);
   const [courses, setCourses] = useState([]);
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
 
   const [type, setType] = useState("edit");
 
@@ -234,6 +239,23 @@ const Grades = () => {
     </Stack>
   );
 
+  const handleExportPDF = () => {
+    setIsGeneratingPDF(true);
+
+    const input = document.getElementById("schedule-table");
+    html2canvas(input).then((canvas) => {
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
+      const imgWidth = 210;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+      pdf.save(
+        `${selectedStudent.first_name} ${selectedStudent.last_name}-grades.pdf`
+      );
+      setIsGeneratingPDF(false);
+    });
+  };
+
   return (
     <>
       <div style={styles.container}>
@@ -242,7 +264,7 @@ const Grades = () => {
             <h1 style={styles.headerTitle}>Grades</h1>
             {breadcrumbs}
           </div>
-          <div style={styles.selectContainer}>
+          <div style={styles.middleContainer}>
             <Select
               placeholder="Select Student"
               style={{ width: 200 }}
@@ -255,8 +277,23 @@ const Grades = () => {
               ))}
             </Select>
           </div>
+          <div style={styles.rightContainer}>
+            <MuiButton
+              variant="outlined"
+              startIcon={<FileDownloadOutlined />}
+              onClick={handleExportPDF}
+            >
+              Export PDF
+            </MuiButton>
+          </div>
         </div>
-        <Table dataSource={grades} columns={columns} rowKey="id" />
+
+        <Table
+          id="schedule-table"
+          dataSource={grades}
+          columns={columns}
+          rowKey="id"
+        />
         {selectedStudent && !modalIsOpen && (
           <Fab
             aria-label="add"
@@ -318,8 +355,12 @@ const styles = {
     fontWeight: "bold",
     marginBottom: "8px",
   },
-  selectContainer: {
+  middleContainer: {
     flex: "1",
+    display: "flex",
+    justifyContent: "center",
+  },
+  rightContainer: {
     display: "flex",
     justifyContent: "flex-end",
   },

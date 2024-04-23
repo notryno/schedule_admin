@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Table, Avatar, Tag, Space, Button, Modal } from "antd";
+import { Table, Avatar, Tag, Space, Button, Modal, Typography } from "antd";
 import ClassroomModal from "../components/classroomModal";
 import { getAllClassroomNames } from "../hooks/api";
 import { useAuth } from "../hooks/authContext";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+import { Breadcrumbs, Button as MuiButton, Stack } from "@mui/material";
+import { FileDownloadOutlined } from "@mui/icons-material";
+import { Link } from "react-router-dom";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 
 const Classrooms = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -10,6 +16,7 @@ const Classrooms = () => {
   const [loading, setLoading] = useState(true);
   const [selectedClassroom, setSelectedClassroom] = useState(null);
   const { getUserToken } = useAuth();
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
 
   const userToken = getUserToken();
 
@@ -85,6 +92,35 @@ const Classrooms = () => {
     });
   };
 
+  const breadcrumbs = (
+    <Stack direction="row" spacing={1} alignItems="center">
+      <Breadcrumbs
+        separator={<NavigateNextIcon fontSize="small" />}
+        aria-label="breadcrumb"
+      >
+        <Link underline="hover" color="inherit" href="/">
+          Home
+        </Link>
+        <Typography color="text.primary">Classrooms</Typography>
+      </Breadcrumbs>
+    </Stack>
+  );
+
+  const handleExportPDF = () => {
+    setIsGeneratingPDF(true);
+
+    const input = document.getElementById("schedule-table");
+    html2canvas(input).then((canvas) => {
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
+      const imgWidth = 210;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+      pdf.save("classrooms.pdf");
+      setIsGeneratingPDF(false);
+    });
+  };
+
   return (
     <>
       <div style={styles.container}>
@@ -95,9 +131,27 @@ const Classrooms = () => {
           selectedClassroom={selectedClassroom}
         />
         <div style={styles.customHeader}>
-          <h1 style={styles.headerTitle}>Classrooms</h1>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <div>
+              <h1 style={styles.headerTitle}>Classroom</h1>
+              {breadcrumbs}
+            </div>
+            <div style={{ marginLeft: "auto" }}>
+              <MuiButton onClick={handleExportPDF} variant="outlined">
+                <FileDownloadOutlined style={{ marginRight: "5px" }} />
+                Download PDF
+              </MuiButton>
+            </div>
+          </div>
         </div>
         <Table
+          id="schedule-table"
           dataSource={classrooms}
           columns={columns}
           loading={loading}

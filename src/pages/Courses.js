@@ -10,6 +10,10 @@ import Stack from "@mui/material/Stack";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { useAuth } from "../hooks/authContext";
 import CourseModal from "../components/courseModal";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+import { Button as MuiButton } from "@mui/material";
+import { FileDownloadOutlined } from "@mui/icons-material";
 const Courses = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [courses, setCourses] = useState([]);
@@ -17,6 +21,7 @@ const Courses = () => {
   const [classrooms, setClassrooms] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [type, setType] = useState("edit");
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
 
   const { getUserToken } = useAuth();
   const userToken = getUserToken();
@@ -147,6 +152,21 @@ const Courses = () => {
     // Implement delete functionality here
   };
 
+  const handleExportPDF = () => {
+    setIsGeneratingPDF(true);
+
+    const input = document.getElementById("schedule-table");
+    html2canvas(input).then((canvas) => {
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
+      const imgWidth = 210;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+      pdf.save("courses.pdf");
+      setIsGeneratingPDF(false);
+    });
+  };
+
   return (
     <>
       <div style={styles.container}>
@@ -187,10 +207,27 @@ const Courses = () => {
           type={type}
         />
         <div style={styles.customHeader}>
-          <h1 style={styles.headerTitle}>Courses</h1>
-          {breadcrumbs}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <div>
+              <h1 style={styles.headerTitle}>Courses</h1>
+              {breadcrumbs}
+            </div>
+            <div style={{ marginLeft: "auto" }}>
+              <MuiButton onClick={handleExportPDF} variant="outlined">
+                <FileDownloadOutlined style={{ marginRight: "5px" }} />
+                Download PDF
+              </MuiButton>
+            </div>
+          </div>
         </div>
         <Table
+          id="schedule-table"
           dataSource={courses}
           columns={columns}
           loading={loading}
