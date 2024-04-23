@@ -17,6 +17,7 @@ import { useAuth, AuthProvider } from "./hooks/authContext";
 import Teachers from "./pages/Teachers";
 import Courses from "./pages/Courses";
 import Modify from "./pages/Modify";
+import Grades from "./pages/Grades";
 
 const PrivateRoute = ({ element: Component, ...rest }) => {
   const { userToken } = useAuth();
@@ -51,6 +52,7 @@ const App = () => {
               path="/teachers"
               element={<PrivateRoute element={Teachers} />}
             />
+            <Route path="/grades" element={<PrivateRoute element={Grades} />} />
             <Route
               path="/students"
               element={<PrivateRoute element={Students} />}

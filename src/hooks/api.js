@@ -365,4 +365,46 @@ export const createTeacher = async (userToken, formData) => {
   }
 };
 
+export const getStudentGrades = async (userToken, studentId) => {
+  try {
+    const response = await api.get(`/grades/student/${studentId}/`, {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const createGrade = async (userToken, formData) => {
+  try {
+    console.log("formData:", formData);
+    const courseIds = [formData.course.id];
+    console.log(courseIds);
+
+    const studentIds = [formData.student.id];
+    let updatedFormData = {
+      ...formData,
+      student: studentIds,
+      course: courseIds,
+    };
+
+    const response = await api.post(
+      `/grades/${formData.student.id}/`,
+      updatedFormData,
+      {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default api;

@@ -9,6 +9,8 @@ import {
   ClassOutlined,
   BadgeOutlined,
   LogoutOutlined,
+  HistoryEduOutlined,
+  CoPresentOutlined,
 } from "@mui/icons-material";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
@@ -36,9 +38,15 @@ function Sidebar({ isOpen, toggleSidebar }) {
     { key: "home", icon: <HomeOutlined />, label: "Home", link: "/" },
     {
       key: "teachers",
-      icon: <SupervisorAccountOutlined />,
+      icon: <CoPresentOutlined />,
       label: "Teachers",
       link: "/teachers",
+    },
+    {
+      key: "grades",
+      icon: <HistoryEduOutlined />,
+      label: "Grades",
+      link: "/grades",
     },
     {
       key: "students",
