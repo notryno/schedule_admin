@@ -59,6 +59,7 @@ const CourseModal = ({
       try {
         const classroomNames = await getAllClassroomNames(userToken);
         setClassrooms(classroomNames);
+        console.log("Classrooms:", classroomNames);
       } catch (error) {
         console.error("Error fetching classrooms:", error);
       }
@@ -74,6 +75,7 @@ const CourseModal = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      console.log(formData);
       if (type === "edit") {
         await updateCourse(selectedCourse.id, userToken, formData);
       } else {
@@ -108,11 +110,13 @@ const CourseModal = ({
           code: selectedCourse.code,
           year: selectedCourse.year,
           semester: selectedCourse.semester,
-          classrooms: classrooms
-            .filter((classroom) =>
-              selectedCourse.classrooms.includes(classroom.id)
-            )
-            .map((classroom) => ({ ...classroom, id: classroom.id })),
+          classrooms: selectedCourse.classrooms
+            ? classrooms
+                .filter((classroom) =>
+                  selectedCourse.classrooms.includes(classroom.id)
+                )
+                .map((classroom) => ({ ...classroom, id: classroom.id }))
+            : [],
         });
 
         console.log("Course set:", formData.classrooms);

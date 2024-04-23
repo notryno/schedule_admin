@@ -326,4 +326,26 @@ export const getTeachers = async (userToken) => {
   }
 };
 
+export const updateTeacher = async (teacherId, userToken, formData) => {
+  try {
+    const courseIds = formData.courses.map((course) => course.id);
+    const updatedFormData = { ...formData, courses: courseIds };
+
+    console.log("Updated formData for PATCH:", updatedFormData);
+    const response = await api.patch(
+      `/teachers/${teacherId}/`,
+      updatedFormData,
+      {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default api;

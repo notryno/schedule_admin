@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Table, Avatar, Tag, Space, Button, Modal } from "antd";
-import { getTeachers, getAllClassroomNames } from "../hooks/api";
+import { getTeachers, getAllClassroomNames, getCourses } from "../hooks/api";
 import Fab from "@mui/material/Fab";
 
 import Breadcrumbs from "@mui/material/Breadcrumbs";
@@ -17,6 +17,8 @@ const Teachers = () => {
   const [loading, setLoading] = useState(true);
   const [classrooms, setClassrooms] = useState([]);
   const [selectedTeacher, setSelectedTeacher] = useState(null);
+  const [type, setType] = useState("edit");
+  const [courses, setCourses] = useState([]);
 
   const { getUserToken } = useAuth();
   const userToken = getUserToken();
@@ -25,7 +27,7 @@ const Teachers = () => {
     const fetchTeachers = async () => {
       try {
         const data = await getTeachers(userToken);
-        console.log(data);
+        console.log("Get teachers", data);
         setTeachers(data);
         setLoading(false);
       } catch (error) {
@@ -34,17 +36,17 @@ const Teachers = () => {
       }
     };
 
-    const fetchClassrooms = async () => {
+    const fetchCourses = async () => {
       try {
-        const classroomNames = await getAllClassroomNames(userToken);
-        setClassrooms(classroomNames);
+        const courseNames = await getCourses(userToken);
+        setCourses(courseNames);
       } catch (error) {
-        console.error("Error fetching classrooms:", error);
+        console.error("Error fetching courses:", error);
       }
     };
 
     fetchTeachers();
-    fetchClassrooms();
+    fetchCourses();
   }, [userToken]);
 
   const fetchAndSetTeachers = async () => {
@@ -87,20 +89,28 @@ const Teachers = () => {
       key: "last_name",
     },
     {
-      title: "Class",
-      dataIndex: "classroom",
-      key: "classroom",
-      render: (classroomId) => {
-        const classroom = classrooms.find((item) => item.id === classroomId);
-        return classroom ? classroom.name : "";
+      title: "Course",
+      dataIndex: "courses",
+      key: "courses",
+      render: (courseIds) => {
+        const courseNames = courseIds.map((id) => {
+          const course = courses.find((item) => item.id === id);
+          return course ? course.name : "";
+        });
+        return courseNames.join(", ");
       },
-      filters: classrooms.map((classroom) => ({
-        text: classroom.name,
-        value: classroom.id,
+      filters: courses.map((course) => ({
+        text: course.name,
+        value: course.id,
       })),
       filterMode: "tree",
       filterSearch: true,
-      onFilter: (value, record) => record.classroom === value,
+      onFilter: (value, record) => {
+        if (!Array.isArray(record.courses)) {
+          return false;
+        }
+        return record.courses.includes(value);
+      },
     },
     {
       title: "Action",
@@ -131,6 +141,7 @@ const Teachers = () => {
   );
 
   const handleEdit = (record) => {
+    console.log("Edit teacher:", record);
     setSelectedTeacher(record);
     setModalIsOpen(true);
   };
@@ -140,11 +151,41 @@ const Teachers = () => {
   return (
     <>
       <div style={styles.container}>
+        {!modalIsOpen && (
+          <Fab
+            aria-label="add"
+            style={{
+              position: "fixed",
+              bottom: "20px",
+              right: "20px",
+            }}
+            onClick={() => {
+              setType("add");
+              setModalIsOpen(true);
+            }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6 mx-auto"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
+          </Fab>
+        )}
         <TeacherModal
           isOpen={modalIsOpen}
           onRequestClose={() => setModalIsOpen(false)}
           selectedTeacher={selectedTeacher}
           fetchAndSetTeachers={fetchAndSetTeachers}
+          type={type}
         />
         <div style={styles.customHeader}>
           <h1 style={styles.headerTitle}>Teachers</h1>

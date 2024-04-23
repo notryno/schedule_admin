@@ -47,7 +47,6 @@ const Home = () => {
     // Filter events for the specific date
     const filteredEvents = events.reduce((acc, event) => {
       const eventDate = new Date(event.date);
-      console.log(event.data[0].title);
       if (
         eventDate.getDate() === value.date() &&
         eventDate.getMonth() === value.month() &&

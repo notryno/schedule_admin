@@ -1,9 +1,11 @@
 import React, { createContext, useContext, useEffect } from "react";
 import base64 from "base-64";
+import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  const navigate = useNavigate();
   useEffect(() => {
     const isTokenExpired = () => {
       const storedToken = sessionStorage.getItem("userToken");
@@ -38,6 +40,7 @@ export const AuthProvider = ({ children }) => {
   const signOut = () => {
     sessionStorage.removeItem("userToken");
     sessionStorage.removeItem("userProfile");
+    navigate("/login");
   };
 
   const getUserToken = () => sessionStorage.getItem("userToken");

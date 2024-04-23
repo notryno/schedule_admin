@@ -9,8 +9,7 @@ import Fab from "@mui/material/Fab";
 import Stack from "@mui/material/Stack";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { useAuth } from "../hooks/authContext";
-import CourseModal from "../components/courseModal"; // Assuming you have a CourseModal component
-
+import CourseModal from "../components/courseModal";
 const Courses = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [courses, setCourses] = useState([]);
