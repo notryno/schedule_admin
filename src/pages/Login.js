@@ -54,12 +54,6 @@ const Login = () => {
         Login
       </button>
       {error && <p style={{ color: "red" }}>{error}</p>}
-      <span
-        style={styles.registerText}
-        onClick={() => navigation.navigate("Register")}
-      >
-        Don't have an account? Register here.
-      </span>
     </div>
   );
 };
