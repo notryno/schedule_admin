@@ -407,4 +407,19 @@ export const createGrade = async (userToken, formData) => {
   }
 };
 
+export const createClassroom = async (userToken, formData) => {
+  try {
+    console.log(formData);
+    const response = await api.post("/classroom/create/", formData, {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default api;

@@ -5,7 +5,7 @@ import { getAllClassroomNames } from "../hooks/api";
 import { useAuth } from "../hooks/authContext";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
-import { Breadcrumbs, Button as MuiButton, Stack } from "@mui/material";
+import { Breadcrumbs, Button as MuiButton, Stack, Fab } from "@mui/material";
 import { FileDownloadOutlined } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
@@ -16,6 +16,7 @@ const Classrooms = () => {
   const [loading, setLoading] = useState(true);
   const [selectedClassroom, setSelectedClassroom] = useState(null);
   const { getUserToken } = useAuth();
+  const [type, setType] = useState("edit");
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
 
   const userToken = getUserToken();
@@ -124,6 +125,35 @@ const Classrooms = () => {
   return (
     <>
       <div style={styles.container}>
+        {!modalIsOpen && (
+          <Fab
+            aria-label="add"
+            style={{
+              position: "fixed",
+              bottom: "20px",
+              right: "20px",
+            }}
+            onClick={() => {
+              setType("add");
+              setModalIsOpen(true);
+            }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6 mx-auto"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
+          </Fab>
+        )}
         <ClassroomModal
           isOpen={modalIsOpen}
           onRequestClose={() => setModalIsOpen(false)}

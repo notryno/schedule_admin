@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
-import { createStudent, getAllClassroomNames } from "../hooks/api";
+import {
+  createClassroom,
+  createStudent,
+  getAllClassroomNames,
+} from "../hooks/api";
 import { useAuth } from "../hooks/authContext";
 import TextField from "@mui/material/TextField";
 import dayjs from "dayjs";
@@ -40,13 +44,15 @@ const ClassroomModal = ({
   onRequestClose,
   fetchAndSetClassrooms,
   selectedClassroom,
+  type,
 }) => {
   const [formData, setFormData] = useState({
     name: "",
     start_date: "",
     end_date: "",
   });
-  const { userToken } = useAuth();
+  const { getUserToken } = useAuth();
+  const userToken = getUserToken();
 
   useEffect(() => {
     if (selectedClassroom) {
@@ -65,7 +71,7 @@ const ClassroomModal = ({
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleDateChange = (date) => {
+  const handleStartDateChange = (date) => {
     const newDate = new Date(date);
     const year = newDate.getFullYear();
     const month = String(newDate.getMonth() + 1).padStart(2, "0");
@@ -74,10 +80,23 @@ const ClassroomModal = ({
     setFormData({ ...formData, start_date: formattedDate });
   };
 
+  const handleEndDateChange = (date) => {
+    const newDate = new Date(date);
+    const year = newDate.getFullYear();
+    const month = String(newDate.getMonth() + 1).padStart(2, "0");
+    const day = String(newDate.getDate()).padStart(2, "0");
+    const formattedDate = `${year}-${month}-${day}`;
+    setFormData({ ...formData, end_date: formattedDate });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Add logic to create or update classroom
+      if (type === "edit") {
+        // await updateCourse(selectedCourse.id, userToken, formData);
+      } else {
+        await createClassroom(userToken, formData);
+      }
       console.log("Classroom created or updated successfully!");
       onRequestClose(false);
       fetchAndSetClassrooms();
@@ -201,7 +220,7 @@ const ClassroomModal = ({
                 label="Start Date"
                 className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 value={dayjs(formData.start_date)}
-                onChange={handleDateChange}
+                onChange={handleStartDateChange}
               />
             </LocalizationProvider>
           </div>
@@ -212,7 +231,7 @@ const ClassroomModal = ({
                 label="End Date"
                 className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 value={dayjs(formData.end_date)}
-                onChange={handleDateChange}
+                onChange={handleEndDateChange}
               />
             </LocalizationProvider>
           </div>

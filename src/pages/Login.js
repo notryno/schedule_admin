@@ -65,6 +65,7 @@ const styles = {
     alignItems: "center",
     width: "100%",
     zIndex: 50,
+    marginTop: 100,
   },
   title: {
     fontSize: 24,
@@ -83,7 +84,7 @@ const styles = {
     height: 40,
     backgroundColor: "blue",
     color: "white",
-    borderRadius: 4,
+    borderRadius: 10,
     border: "none",
     cursor: "pointer",
   },
