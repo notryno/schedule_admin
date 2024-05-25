@@ -5,6 +5,7 @@ import { useAuth } from "../hooks/authContext";
 import TextField from "@mui/material/TextField";
 import { Upload, message, Image } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
+import { BASE_URL } from "../hooks/authApi";
 import ImgCrop from "antd-img-crop";
 import "../styles/modal.css";
 
@@ -33,6 +34,8 @@ const customStyles = {
 
 Modal.setAppElement("#root");
 
+const modifiedURL = BASE_URL.replace(/\/api\/$/, "");
+
 const StudentModal = ({
   isOpen,
   onRequestClose,
@@ -46,7 +49,7 @@ const StudentModal = ({
     firstName: "",
     lastName: "",
     classroom: "",
-    profile_picture: null,
+    profile_picture: "",
   });
   const { getUserToken } = useAuth();
   const userToken = getUserToken();
@@ -78,36 +81,25 @@ const StudentModal = ({
     if (file.status === "removed") {
       return;
     }
-    console.log("file:", file.status);
     setFormData({ ...formData, profile_picture: file.originFileObj });
     setFileList([file]);
+    console.log("fileList:", fileList);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // const { profile_picture, ...restFormData } = formData;
-      // const fileName = profile_picture ? profile_picture.name : "";
-      // const profile_picture_data = profile_picture
-      //   ? { uri: profile_picture, type: "image/jpeg", name: fileName }
-      //   : null;
-      // const formDataWithPicture = profile_picture_data
-      //   ? { ...restFormData, profile_picture: profile_picture_data }
-      //   : restFormData;
-
-      // const file = await getBase64(profile_picture);
-
-      // console.log("formDataWithPicture:", formDataWithPicture);
       if (type === "edit") {
         await updateUser(selectedStudent.id, userToken, formData);
       } else {
-        // await createUser(userToken, formData, file);
+        await createUser(userToken, formData);
       }
 
       console.log("Student created successfully!");
       onRequestClose(false);
       fetchAndSetStudents();
       resetFormData();
+      selectedStudent = null;
     } catch (error) {
       console.error("Error creating student:", error);
     }
@@ -132,12 +124,23 @@ const StudentModal = ({
     const fetchStudent = async () => {
       try {
         setFormData({
-          email: selectedStudent.email,
-          username: selectedStudent.username,
-          firstName: selectedStudent.first_name,
-          lastName: selectedStudent.last_name,
-          classroom: selectedStudent.classroom,
+          email: selectedStudent.email || "",
+          username: selectedStudent.username || "",
+          firstName: selectedStudent.first_name || "",
+          lastName: selectedStudent.last_name || "",
+          classroom: selectedStudent.classroom || "",
+          profile_picture: selectedStudent.profile_picture || "",
         });
+        if (selectedStudent.profile_picture) {
+          setFileList([
+            {
+              uid: "-1",
+              name: "image.png",
+              status: "done",
+              url: `${modifiedURL}${selectedStudent.profile_picture}`,
+            },
+          ]);
+        }
       } catch (error) {
         console.error("Error fetching student:", error);
       }
@@ -152,15 +155,19 @@ const StudentModal = ({
       firstName: "",
       lastName: "",
       classroom: "",
-      profile_picture: null,
+      profile_picture: "",
     });
+
+    setFileList([]);
+    setPreviewImage("");
   };
 
   const handlePreview = async (file) => {
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj);
     }
-    setPreviewImage(file.url || file.preview);
+    setPreviewImage(file.url || file.preview || file.thumbUrl);
+    console.log("previewImage:", previewImage);
     setPreviewOpen(true);
   };
 
